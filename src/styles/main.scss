@@ -1,0 +1,21 @@
+// Global stylesheet entry point — imported once in BaseLayout.astro.
+// Order matters: tokens -> base -> shared components. Section-scoped styles
+// live inside each *.astro component's own <style lang="scss"> block and can
+// `@use` the tokens/breakpoints modules directly.
+
+@use 'tokens/colors';
+@use 'tokens/typography';
+@use 'tokens/spacing';
+@use 'tokens/motion';
+@use 'tokens/breakpoints';
+
+@use 'base/reset';
+@use 'base/fonts';
+@use 'base/global';
+@use 'base/reveal';
+
+@use 'components/button';
+@use 'components/badge';
+@use 'components/card';
+@use 'components/accordion';
+@use 'components/form';

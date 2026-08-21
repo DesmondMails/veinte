@@ -1,0 +1,449 @@
+---
+import { Image } from 'astro:assets';
+import floppyDesktop from '@/assets/images/floppy/floppy-disk-desktop.png';
+import floppyMobile from '@/assets/images/floppy/floppy-disk-mobile.png';
+import { courseResults } from '@/data/courseResults';
+---
+
+<section class="section section--light course-results" aria-labelledby="course-results-heading">
+  <div class="container course-results__container">
+    <!-- Figma 2274:5610 — desktop sticky scroll + fanned deck -->
+    <div class="course-results__scroll-stage" data-floppy-scroll-stage data-floppy-scroll-distance="400">
+      <div class="course-results__pin" data-floppy-pin>
+        <div class="course-results__head">
+          <h2 id="course-results-heading" class="course-results__title" data-reveal>
+            <span class="course-results__title-white">Це твій результат</span>
+            <span class="accent course-results__title-accent">після нашого курсу</span>
+          </h2>
+        </div>
+
+        <div class="course-results__deck" data-floppy-deck>
+          {
+            courseResults.map((card, index) => (
+              <div
+                class="floppy"
+                data-floppy-card
+                style={`--rotation:${card.rotation}deg; --i:${index}; --offset-x:${card.offsetX}rem; --offset-y:${card.offsetY}rem; --enter-x:${card.enterX}; --enter-y:${card.enterY}; --layer:${index + 1}`}
+              >
+            <div class="floppy__media" aria-hidden="true">
+              <Image
+                src={floppyDesktop}
+                alt=""
+                width={388}
+                height={409}
+                class="floppy__image floppy__image--desktop"
+                loading="lazy"
+              />
+              <Image
+                src={floppyMobile}
+                alt=""
+                width={342}
+                height={360}
+                class="floppy__image floppy__image--mobile"
+                loading="lazy"
+              />
+            </div>
+            <div class="floppy__content">
+              <h3 class="floppy__title">
+                {card.titleLines.map((line) => (
+                  <span class="floppy__title-line">{line}</span>
+                ))}
+              </h3>
+              <span class="floppy__icon" aria-hidden="true">
+                {card.icon}
+              </span>
+              <p class="floppy__description">{card.description}</p>
+            </div>
+          </div>
+        ))
+      }
+        </div>
+      </div>
+      <div class="course-results__scroll-spacer" data-floppy-scroll-spacer aria-hidden="true"></div>
+    </div>
+
+    <!-- Figma 2274:4402 — mobile carousel, one disk per slide -->
+    <div class="course-results__carousel" data-carousel>
+      <div class="course-results__viewport">
+        <div
+          class="course-results__track"
+          data-carousel-track
+          role="region"
+          aria-label="Результати після курсу"
+          tabindex="0"
+        >
+          {
+            courseResults.map((card, index) => (
+              <div
+                class="floppy"
+                data-carousel-item
+                style={`--rotation:${card.rotation}deg; --i:${index}; --offset-x:${card.offsetX}rem; --offset-y:${card.offsetY}rem; --layer:${index + 1}`}
+              >
+                <div class="floppy__media" aria-hidden="true">
+                  <Image
+                    src={floppyDesktop}
+                    alt=""
+                    width={388}
+                    height={409}
+                    class="floppy__image floppy__image--desktop"
+                    loading="lazy"
+                  />
+                  <Image
+                    src={floppyMobile}
+                    alt=""
+                    width={342}
+                    height={360}
+                    class="floppy__image floppy__image--mobile"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="floppy__content">
+                  <h3 class="floppy__title">
+                    {card.titleLines.map((line) => (
+                      <span class="floppy__title-line">{line}</span>
+                    ))}
+                  </h3>
+                  <span class="floppy__icon" aria-hidden="true">
+                    {card.icon}
+                  </span>
+                  <p class="floppy__description">{card.description}</p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="course-results__controls">
+        <div class="course-results__arrows">
+          <button
+            type="button"
+            class="btn btn--carousel btn--carousel-prev course-results__arrow"
+            data-carousel-prev
+            aria-disabled="true"
+            tabindex="-1"
+            aria-label="Попередній результат"
+          ></button>
+          <button
+            type="button"
+            class="btn btn--carousel btn--carousel-next course-results__arrow"
+            data-carousel-next
+            aria-disabled="false"
+            aria-label="Наступний результат"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '@scripts/floppy-scroll';
+  import '@scripts/carousel';
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  // Figma 2274:5610 — front disk bottom (445+409) − top disk top (229) = 625px
+  $deck-height: 39.0625rem;
+  $deck-overlap: 1.1875rem; // 19px — top disk tucks under line 2 of title
+  $deck-scroll-steps: 25rem; // 400px — matches data-floppy-scroll-distance
+
+  .course-results__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-7); // 40px mobile
+
+    @include from('lg') {
+      gap: 0;
+    }
+  }
+
+  .course-results__head {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    max-width: 21.375rem; // 342px mobile
+
+    @include from('lg') {
+      max-width: none;
+    }
+  }
+
+  // Figma mobile: 32px white + 36px pixel accent, two lines
+  .course-results__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2); // 8px
+    line-height: var(--lh-tight);
+    text-transform: uppercase;
+    width: 100%;
+  }
+
+  .course-results__title-white {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+    font-size: 2rem; // 32px mobile
+    color: var(--color-text-on-light);
+
+    @include from('lg') {
+      font-size: 4rem; // 64px
+      letter-spacing: -0.03em;
+    }
+  }
+
+  .course-results__title-accent {
+    font-size: 2.25rem; // 36px mobile
+    letter-spacing: -0.08em;
+
+    @include from('lg') {
+      font-size: 4.875rem; // 78px
+      letter-spacing: -0.03em;
+      line-height: 0.8;
+    }
+  }
+
+  // ── Desktop sticky scroll stage ───────────────────────────────────────
+  .course-results__scroll-stage {
+    width: 100%;
+    overflow-anchor: none;
+
+    @include until('lg') {
+      display: contents;
+    }
+  }
+
+  .course-results__scroll-spacer {
+    display: none;
+
+    @include from('lg') {
+      display: block;
+      width: 100%;
+      height: $deck-scroll-steps; // initial — JS shrinks with scroll progress
+      pointer-events: none;
+    }
+  }
+
+  .course-results__pin {
+    @include until('lg') {
+      display: contents;
+    }
+
+    @include from('lg') {
+      position: sticky;
+      top: 6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+  }
+
+  // ── Desktop deck (388×409 disks) ──────────────────────────────────────
+  .course-results__deck {
+    display: none;
+
+    @include from('lg') {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: $deck-height;
+      max-width: none;
+      margin-top: -$deck-overlap;
+
+      &.is-interactive .floppy {
+        transform: translate(-50%, 0) rotate(var(--rotation, 0deg)) scale(1);
+        translate: var(--offset-x) var(--offset-y);
+        transition: transform 0.35s ease;
+
+        &:hover {
+          z-index: 10;
+          transform: translate(-50%, 0) rotate(var(--rotation, 0deg)) scale(1.1);
+        }
+      }
+    }
+  }
+
+  // ── Mobile carousel (342×360 disks) ───────────────────────────────────
+  .course-results__carousel {
+    width: 100%;
+
+    @include from('lg') {
+      display: none;
+    }
+  }
+
+  .course-results__viewport {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  .course-results__track {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    margin: 0;
+    padding: 0;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .floppy {
+      scroll-snap-align: center;
+      scroll-snap-stop: always;
+      flex: 0 0 100%;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .course-results__controls {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-7); // 40px — Figma 2274:4613 disk → arrows
+
+    @include from('lg') {
+      margin-top: var(--space-5);
+    }
+  }
+
+  .course-results__arrows {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  // ── Floppy card — Figma 2274:5610 / 2274:4617 ────────────────────────
+  .floppy {
+    --card-reveal: 1;
+
+    position: relative;
+    width: 21.375rem; // 342px mobile
+    height: 22.5rem; // 360px
+
+    @include from('lg') {
+      --card-reveal: 0;
+
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 24.25rem; // 388px
+      height: 25.5625rem; // 409px
+      opacity: 0;
+      transform: translate(-50%, 0) rotate(calc(var(--rotation, 0deg) * var(--card-reveal)));
+      translate:
+        calc((1 - var(--card-reveal)) * var(--enter-x) + var(--card-reveal) * var(--offset-x))
+        calc((1 - var(--card-reveal)) * var(--enter-y) + var(--card-reveal) * var(--offset-y));
+      z-index: calc(var(--i) + 1);
+    }
+  }
+
+  .floppy__media {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .floppy__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+  }
+
+  .floppy__image--desktop {
+    display: none;
+
+    @include from('lg') {
+      display: block;
+    }
+  }
+
+  .floppy__image--mobile {
+    @include from('lg') {
+      display: none;
+    }
+  }
+
+  // Label overlay — Figma 2274:4617 (mobile) / 2274:5629 (desktop)
+  .floppy__content {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .floppy__title {
+    position: absolute;
+    top: 42%;
+    right: -13%;
+    width: 78%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    font-family: var(--font-pixel);
+    text-transform: uppercase;
+    font-size: 1.875rem; // 30px
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--color-accent);
+
+    @include from('lg') {
+      top: 43%;
+      left: 8%;
+      width: 77%;
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  .floppy__title-line {
+    display: block;
+  }
+
+  .floppy__icon {
+    position: absolute;
+    top: 61%;
+    left: 14.62%;
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.625rem;
+    line-height: 2.5rem;
+    text-align: center;
+
+    @include from('lg') {
+      top: 66.5%;
+      left: 16.24%;
+    }
+  }
+
+  // Figma: x=50 y=289 w=228, 12px mono
+  .floppy__description {
+    position: absolute;
+    top: 77%;
+    left: 14.62%;
+    width: 72.22%;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.75rem; // 12px
+    line-height: 1.4;
+    color: var(--color-text-on-light);
+
+    @include from('lg') {
+      top: 80.2%;
+      left: 16.24%;
+      width: 68.56%;
+    }
+  }
+</style>

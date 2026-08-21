@@ -1,0 +1,18 @@
+// Motion tokens shared by CSS transitions/keyframes and the small TS
+// animation helpers (reveal.ts, carousel.ts, accordion.ts).
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --duration-fast: 160ms;
+  --duration-base: 320ms;
+  --duration-slow: 560ms;
+
+  --reveal-distance: 28px;
+  --reveal-stagger-step: 90ms;
+
+  --z-header: 100;
+  --z-overlay: 200;
+  --z-toast: 300;
+}

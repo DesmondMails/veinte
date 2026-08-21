@@ -1,0 +1,348 @@
+---
+import { getSiteSettings } from '@/lib/content';
+
+const settings = await getSiteSettings();
+const { hero } = settings;
+
+// Figma (2358:1079): white "Навчання" + two orange lines ("під ваші" / "інтереси").
+const secondaryAccentLines = hero.secondaryAccent.includes('\n')
+  ? hero.secondaryAccent
+      .split(/\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean)
+  : (() => {
+      const parts = hero.secondaryAccent.trim().split(/\s+/);
+      if (parts.length <= 1) return parts;
+      return [parts.slice(0, -1).join(' '), parts.at(-1)!];
+    })();
+---
+
+<section class="hero" id="top" aria-label="Hero">
+  <!--
+    Animated WebP keeps the GIF's alpha channel so "Hola…" can sit *behind*
+    the computer (z-index) while remaining visible in the transparent areas.
+    The original 57MB GIF is the Figma `group107_…` asset; this is a scaled
+    1823×1026 encode of the same file (re-export when the source GIF updates).
+  -->
+  <div class="hero__visual" aria-hidden="true">
+    <img
+      class="hero__media"
+      src="/video/hero-loop.webp"
+      alt=""
+      width="1823"
+      height="1026"
+      decoding="async"
+      fetchpriority="high"
+      data-hero-media
+    />
+  </div>
+  <div class="hero__floor" aria-hidden="true"></div>
+
+  <div class="container hero__container">
+    <!--
+      Absolute children must sit inside this stage (the container content box).
+      Otherwise `left: 0` is relative to the padded container's padding edge and
+      ignores `--page-gutter` — text/CTA flush to the viewport.
+    -->
+    <div class="hero__stage">
+      <div class="hero__headline">
+        <h1 class="hero__title">
+          <span class="hero__title-line">{hero.titleLine1}</span>
+          <span class="hero__title-line">{hero.titleLine2}</span>
+        </h1>
+        <p class="hero__accent accent" set:text={hero.accentTitle} />
+      </div>
+
+      <p class="hero__description hero__description--desktop">{hero.description}</p>
+
+      <div class="hero__secondary">
+        <p class="hero__secondary-title">
+          <span class="hero__secondary-white">{hero.secondaryTitle}</span>
+          <span class="hero__secondary-accent accent">
+            {secondaryAccentLines.map((line) => (
+              <span class="hero__secondary-accent-line">{line}</span>
+            ))}
+          </span>
+        </p>
+        <p class="hero__secondary-description">{hero.secondaryDescription}</p>
+      </div>
+
+      <p class="hero__description hero__description--mobile">{hero.secondaryDescription}</p>
+
+      <a href={settings.ctaPrimary.href} class="btn btn--primary btn--size-mobile hero__mobile-cta">{settings.ctaPrimary.label}</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Freeze the loop for users who prefer reduced motion — swap to the
+  // static poster so the composition still reads correctly.
+  const media = document.querySelector<HTMLImageElement>('[data-hero-media]');
+  if (media && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    media.src = '/video/hero-poster.jpg';
+  }
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  // Full viewport height on every breakpoint — header overlays inside (see
+  // Header.astro). Figma desktop artboard is 992px tall; on taller screens
+  // 100svh + bottom-anchored GIF keeps the pedestal uncropped.
+  .hero {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-bg);
+    height: 100svh;
+    min-height: 52.75rem; // 844px — Figma mobile floor
+  }
+
+  // Computer layer sits above "Hola…" (z-index 1) and below accent/meta (3).
+  // Sized to the Figma node boxes — NOT width/height 100% + object-fit cover
+  // (that was enlarging the GIF to fill the viewport).
+  .hero__visual {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .hero__media {
+    position: absolute;
+    max-width: none;
+    object-fit: cover;
+
+    // Figma mobile (2358:1139): 869×489 at x=-229 y=146 inside 390×844
+    // → center at (50%+10.5px, 50%-31.5px).
+    @include until('lg') {
+      width: 54.3125rem; // 869px
+      height: 30.5625rem; // 489px
+      left: calc(50% + 0.65625rem);
+      top: calc(50% - 1.96875rem);
+      transform: translate(-50%, -50%);
+    }
+
+    // Figma desktop (2358:1084): 1823×1026 at x=-202 y=-34 inside 1440×992.
+    // Bottom of GIF aligns with frame bottom; anchor to bottom on 100svh.
+    @include from('lg') {
+      width: 113.9375rem; // 1823px
+      height: 64.125rem; // 1026px
+      left: calc(50% - 0.65625rem); // center offset −10.5px from 1440 canvas
+      bottom: 0;
+      top: auto;
+      transform: translateX(-50%);
+    }
+  }
+
+  .hero__floor {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    height: 11.25rem;
+    background:
+      radial-gradient(60% 100% at 50% 100%, rgba(254, 83, 14, 0.45), transparent 70%),
+      linear-gradient(180deg, transparent 0%, rgba(1, 1, 1, 0.35) 100%);
+    pointer-events: none;
+
+    @include until('lg') {
+      height: 24rem;
+      background: linear-gradient(180deg, transparent 0%, rgba(1, 1, 1, 0.72) 42%, rgba(1, 1, 1, 0.92) 100%);
+    }
+  }
+
+  .hero__container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
+
+  .hero__stage {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  // ── Headline ──────────────────────────────────────────────────────────
+  // `display: contents` so title (z:1) and accent (z:3) participate in the
+  // same stacking context as `.hero__visual` (z:2).
+  .hero__headline {
+    display: contents;
+  }
+
+  .hero__title {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: 2.5rem;
+    line-height: 0.99;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+
+    @include until('lg') {
+      padding-top: 5.8125rem; // 93px (Figma)
+      padding-inline: 1.5rem; // 24px — Figma 2358:1133 x=24
+      margin-bottom: -2.1875rem; // -35px
+    }
+
+    @include from('lg') {
+      position: absolute;
+      top: 11.375rem; // 182px — Figma y, fixed so text stays put on tall screens
+      left: 0; // Figma x=40 inside the 1440 canvas
+      padding-top: 0;
+      margin-bottom: 0;
+      font-size: clamp(2.5rem, 1.2rem + 5.5vw, 5rem);
+      max-width: 36rem;
+    }
+  }
+
+  .hero__accent {
+    position: relative;
+    z-index: 3;
+    display: block;
+    max-width: 100%;
+    font-size: 2.875rem;
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    text-align: right;
+    text-transform: uppercase;
+    white-space: pre-line;
+    overflow-wrap: normal;
+    word-break: keep-all;
+
+    @include until('lg') {
+      padding-inline: 1.5rem; // 24px — Figma mobile gutter
+    }
+
+    @include from('lg') {
+      position: absolute;
+      top: 11.375rem; // 182px
+      right: 0;
+      width: 27.2rem;
+      font-size: clamp(2.875rem, 1rem + 6vw, 5.625rem);
+    }
+  }
+
+  .hero__description--desktop {
+    display: none;
+
+    @include from('lg') {
+      display: block;
+      position: absolute;
+      top: 34.6875rem; // 555px — Figma 4052:524
+      left: 0;
+      z-index: 3;
+      max-width: 20.5rem;
+      font-size: var(--fs-body);
+      line-height: 1.2;
+      color: var(--color-surface-200);
+    }
+  }
+
+  .hero__secondary {
+    display: none;
+
+    @include from('lg') {
+      display: flex;
+      position: absolute;
+      top: 34.6875rem; // 555px — Figma 4052:525
+      right: 0;
+      z-index: 3;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2rem;
+      width: 20.5rem;
+      text-align: right;
+    }
+  }
+
+  .hero__secondary-title {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    width: 100%;
+    line-height: 0.9;
+    text-align: left;
+  }
+
+  .hero__secondary-white {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 2.25rem;
+    line-height: 0.9;
+    color: var(--color-surface-50);
+  }
+
+  .hero__secondary-accent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    font-size: 2.5rem;
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+
+  .hero__secondary-accent-line {
+    display: block;
+  }
+
+  .hero__secondary-description {
+    font-size: var(--fs-body);
+    line-height: 1.2;
+    color: var(--color-surface-200);
+    text-align: right;
+  }
+
+  .hero__description--mobile {
+    position: absolute;
+    // 645 / 844 — scales with 100svh on taller phones
+    top: 76.4%;
+    left: 1.5rem; // Figma x=24
+    right: 1.5rem;
+    z-index: 3;
+    width: auto;
+    max-width: 21.375rem; // 342px
+    margin-inline: auto;
+    font-size: var(--fs-body);
+    line-height: 1.2;
+    color: #c8c8c8;
+    text-align: center;
+
+    @include from('lg') {
+      display: none;
+    }
+  }
+
+  .hero__mobile-cta {
+    position: absolute;
+    // 742 / 844
+    top: 87.9%;
+    left: 1.5rem;
+    right: 1.5rem;
+    z-index: 3;
+    width: auto;
+    max-width: 21.375rem; // 342px — Figma 2358:1136
+    margin-inline: auto;
+    transform: none;
+
+    // .btn--primary hover/active replaces transform and breaks translateX centering.
+    &:hover:not(:disabled),
+    &:active:not(:disabled) {
+      transform: none;
+    }
+
+    @include from('lg') {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,37 @@
+siteName: Veinte
+siteTagline: Онлайн-школа іспанської мови
+contactEmail: veinte@gmail.com
+
+socials:
+  instagram: https://instagram.com/veinte.espanol
+  telegram: https://t.me/veinte_espanol
+  tiktok: https://tiktok.com/@veinte.espanol
+
+hero:
+  titleLine1: 'Hola, ви вже'
+  titleLine2: готові?
+  accentTitle: |-
+    вивчати
+    іспанську
+  description: Усе необхідне для ефективного вивчення іспанської — від перших кроків до впевненого спілкування
+  secondaryTitle: Навчання
+  secondaryAccent: |-
+    під ваші
+    інтереси
+  secondaryDescription: Ваш персональний шлях до вільної іспанської — завдяки інтерактивній навчальній платформі
+
+ctaPrimary:
+  label: Почати навчання
+  href: '#cta-form'
+
+ctaForm:
+  title: Готові заговорити
+  accentTitle: іспанською?
+  description: Залиште заявку — ми підберемо курс саме для вас.
+  submitLabel: Отримати консультацію
+
+footer:
+  quote: 'Одне рішення може змінити все — зробіть перший крок до іспанської сьогодні!'
+  copyright: '© 2026 Escuela de Español "Veinte". Всі права захищені.'
+  ctaLabel: навчатися
+  ctaHref: '#cta-form'

@@ -1,0 +1,34 @@
+// Spacing / sizing tokens. Base 4px scale matching the Figma layout grid
+// (section paddings observed at 40 / 120 / 190px on desktop).
+
+:root {
+  --space-1: 0.25rem; // 4px
+  --space-2: 0.5rem; // 8px
+  --space-3: 0.75rem; // 12px
+  --space-4: 1rem; // 16px
+  --space-5: 1.5rem; // 24px
+  --space-6: 2rem; // 32px
+  --space-7: 2.5rem; // 40px
+  --space-8: 3rem; // 48px
+  --space-9: 4rem; // 64px
+  --space-10: 5rem; // 80px
+  --space-11: 6rem; // 96px
+  --space-12: 7.5rem; // 120px
+
+  // Outer page gutter: 16px on mobile → 40px below the Figma desktop canvas.
+  // At ≥1440px the container IS the 1440 canvas, so horizontal padding drops
+  // to 0 — otherwise border-box padding shrinks the usable width to 1360.
+  --page-gutter: clamp(1rem, 0.5rem + 2.2vw, 2.5rem);
+  --content-max-width: 1360px;
+  --container-max-width: 1440px;
+
+  // Vertical rhythm between major sections.
+  --section-spacing-mobile: 4rem;
+  --section-spacing-desktop: 7.5rem;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+}

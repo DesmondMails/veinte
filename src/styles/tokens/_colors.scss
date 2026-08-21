@@ -1,0 +1,55 @@
+// Color tokens extracted from the Figma design system (Surface / Accent scales).
+// Exposed both as SCSS variables (build-time) and CSS custom properties
+// (runtime, usable from component-scoped styles and inline attributes).
+
+$color-black: #010101;
+$color-surface-900: #0b0b0b;
+$color-surface-800: #141414;
+$color-surface-700: #1c1c1c;
+$color-surface-500: #2a2a2a;
+$color-surface-300: #454545;
+$color-surface-200: #7b7b7b;
+$color-surface-100: #c8c8c8;
+$color-surface-50: #fdfdfd;
+
+$color-light-bg: #f2f2f2;
+$color-light-bg-end: #e2e2e2;
+
+$color-accent: #fe530e;
+$color-accent-dark: #c53f0a;
+$color-accent-light: #ff8a5c;
+
+$color-success: #3ecf6e;
+$color-error: #ff5c5c;
+
+:root {
+  --color-black: #{$color-black};
+  --color-bg: #{$color-black};
+  --color-surface-900: #{$color-surface-900};
+  --color-surface-800: #{$color-surface-800};
+  --color-surface-700: #{$color-surface-700};
+  --color-surface-500: #{$color-surface-500};
+  --color-surface-300: #{$color-surface-300};
+  --color-surface-200: #{$color-surface-200};
+  --color-surface-100: #{$color-surface-100};
+  --color-surface-50: #{$color-surface-50};
+
+  --color-light-bg: #{$color-light-bg};
+  --color-light-bg-end: #{$color-light-bg-end};
+
+  --color-accent: #{$color-accent};
+  --color-accent-dark: #{$color-accent-dark};
+  --color-accent-light: #{$color-accent-light};
+
+  --color-success: #{$color-success};
+  --color-error: #{$color-error};
+
+  --color-text-primary: var(--color-surface-50);
+  --color-text-muted: var(--color-surface-200);
+  --color-text-on-light: var(--color-black);
+  --color-text-on-light-muted: #5c5c5c;
+
+  --shadow-accent-glow: 0 8px 24px -6px rgba(254, 83, 14, 0.55);
+  --shadow-card: 0 12px 32px -12px rgba(0, 0, 0, 0.6);
+  --focus-ring: 0 0 0 3px rgba(254, 83, 14, 0.55);
+}

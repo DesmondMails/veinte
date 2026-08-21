@@ -1,0 +1,283 @@
+---
+import { getSiteSettings } from '@/lib/content';
+
+const settings = await getSiteSettings();
+const { ctaForm } = settings;
+---
+
+<section class="section cta-form" id="cta-form" aria-labelledby="cta-form-heading">
+  <div class="container cta-form__container">
+    <div class="cta-form__content">
+      <div class="cta-form__copy" data-reveal>
+        <h2 id="cta-form-heading" class="cta-form__title">
+          <span class="cta-form__title-white">{ctaForm.title}</span>
+          <span class="accent cta-form__title-accent">{ctaForm.accentTitle}</span>
+        </h2>
+        <p class="cta-form__description">{ctaForm.description}</p>
+      </div>
+
+      <form
+        class="form cta-form__form"
+        name="cta-request"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        data-reveal
+        data-reveal-index="1"
+        data-cta-form
+      >
+        <input type="hidden" name="form-name" value="cta-request" />
+        <p class="form__honeypot">
+          <label>
+            Не заповнюйте це поле: <input name="bot-field" tabindex="-1" autocomplete="off" />
+          </label>
+        </p>
+
+        <div class="cta-form__inputs">
+          <input
+            class="form-field__input cta-form__input"
+            type="text"
+            id="cta-name"
+            name="name"
+            required
+            autocomplete="name"
+            placeholder="Ім'я*"
+            aria-label="Ім'я"
+          />
+
+          <input
+            class="form-field__input cta-form__input"
+            type="text"
+            id="cta-level"
+            name="level"
+            required
+            placeholder="Рівень іспанської*"
+            aria-label="Рівень іспанської"
+          />
+
+          <input
+            class="form-field__input cta-form__input"
+            type="text"
+            id="cta-goal"
+            name="goal"
+            required
+            placeholder="Ціль навчання*"
+            aria-label="Ціль навчання"
+          />
+
+          <input
+            class="form-field__input cta-form__input"
+            type="text"
+            id="cta-contact"
+            name="contact"
+            required
+            autocomplete="tel"
+            placeholder="Телефон / месенджер*"
+            aria-label="Телефон або месенджер"
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn--primary btn--size-mobile cta-form__submit form__submit"
+          data-cta-submit
+        >
+          {ctaForm.submitLabel}
+        </button>
+
+        <p class="form__status" data-cta-status role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Figma desktop (2274:6299): full-bleed bg · mobile (2314:2142): video below CTA -->
+  <div class="cta-form__visual" aria-hidden="true">
+    <video
+      class="cta-form__media"
+      poster="/video/cta-poster.jpg"
+      muted
+      loop
+      playsinline
+      autoplay
+      preload="metadata"
+      width="2441"
+      height="1440"
+      data-cta-media
+    >
+      <source src="/video/cta-loop.mp4" type="video/mp4" />
+    </video>
+  </div>
+</section>
+
+<script>
+  const media = document.querySelector<HTMLVideoElement>('[data-cta-media]');
+  if (media && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    media.pause();
+    media.removeAttribute('autoplay');
+  }
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  .cta-form {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-bg);
+    padding-block: var(--space-9) 0; // top only on mobile — video sits flush below
+
+    @include from('lg') {
+      min-height: 52.8125rem; // 849px — Figma 2274:6298
+      padding-block: 7.5rem; // 120px
+      display: flex;
+      align-items: flex-start;
+    }
+  }
+
+  .cta-form__visual {
+    position: relative;
+    z-index: 1;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    margin-top: var(--space-7); // 40px below form — Figma mobile
+    overflow: hidden;
+    pointer-events: none;
+    aspect-ratio: 390 / 391; // Figma 2314:2142
+
+    @include from('lg') {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      width: auto;
+      margin: 0;
+      aspect-ratio: auto;
+    }
+  }
+
+  .cta-form__media {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: center bottom;
+
+    @include from('lg') {
+      position: absolute;
+      inset: 0;
+      object-position: right center;
+    }
+  }
+
+  .cta-form__container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+  }
+
+  // Figma 2274:6300 — left column 544px; mobile 2314:2143 — centered copy + form
+  .cta-form__content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7); // 40px — subtitle → form on mobile
+    width: 100%;
+    max-width: 21.625rem; // 346px mobile content width
+    margin-inline: auto;
+    align-items: stretch;
+
+    @include from('lg') {
+      gap: var(--space-9); // 64px — copy → form on desktop
+      max-width: 34rem; // 544px
+      margin-inline: 0;
+      align-items: flex-start;
+    }
+  }
+
+  .cta-form__copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5); // 24px — title → description
+    width: 100%;
+    text-align: center;
+    align-items: center;
+
+    @include from('lg') {
+      text-align: left;
+      align-items: flex-start;
+    }
+  }
+
+  .cta-form__title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2); // 8px
+    line-height: var(--lh-tight);
+    width: 100%;
+    text-align: center;
+    align-items: center;
+
+    @include from('lg') {
+      text-align: left;
+      align-items: flex-start;
+    }
+  }
+
+  .cta-form__title-white {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 2rem; // 32px mobile
+    line-height: 0.9;
+
+    @include from('lg') {
+      font-size: 4rem; // 64px desktop
+      letter-spacing: -0.03em;
+    }
+  }
+
+  .cta-form__title-accent {
+    font-size: 2.25rem; // 36px mobile
+    line-height: 0.8;
+    letter-spacing: -0.1875rem;
+
+    @include from('lg') {
+      font-size: 4.875rem; // 78px desktop
+    }
+  }
+
+  .cta-form__description {
+    max-width: 20.5rem; // 328px — Figma mobile
+    font-size: var(--fs-body);
+    line-height: 1.2;
+    color: var(--color-surface-200);
+
+    @include from('lg') {
+      max-width: 20.5rem; // 328px — Figma desktop
+    }
+  }
+
+  .cta-form__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7); // 40px — inputs → button
+    width: 100%;
+  }
+
+  .cta-form__inputs {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4); // 16px — Figma input stack
+    width: 100%;
+  }
+
+  .cta-form__input {
+    padding: 1rem 1.5rem; // 16px 24px — Figma
+    font-size: var(--fs-caption); // 12px Body 5
+    line-height: 1.4;
+  }
+
+  .cta-form__submit {
+    width: 100%;
+    margin-top: 0;
+  }
+</style>

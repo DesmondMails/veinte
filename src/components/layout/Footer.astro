@@ -1,0 +1,338 @@
+---
+import Icon from '@components/ui/Icon.astro';
+import { getSiteSettings } from '@/lib/content';
+
+const settings = await getSiteSettings();
+
+const socialLinks = [
+  { label: 'Instagram', href: settings.socials.instagram },
+  { label: 'Tik tok', href: settings.socials.tiktok },
+  { label: 'telegram', href: settings.socials.telegram },
+];
+
+const legalLinks = [
+  { label: 'Оферта', href: '/oferta' },
+  { label: 'Повернення коштів', href: '/povernennya' },
+  { label: 'Cookies', href: '/cookies' },
+  { label: 'Політика конфіденційності', href: '/pryvatnist' },
+];
+---
+
+<footer class="footer section section--light">
+  <div class="container footer__inner">
+    <!-- Figma 2332:5466 — quote + 2×2 keycap grid -->
+    <div class="footer__top">
+      <p class="footer__quote">&ldquo;{settings.footer.quote}&rdquo;</p>
+
+      <div class="footer__links">
+        {
+          socialLinks.map((link) => (
+            <a href={link.href} class="footer-link" target="_blank" rel="noopener noreferrer">
+              <span class="footer-link__shell footer-link__shell--light" aria-hidden="true"></span>
+              <span class="footer-link__content">
+                <span class="footer-link__label">{link.label}</span>
+                <Icon name="arrow-up-right" class="footer-link__icon" />
+              </span>
+            </a>
+          ))
+        }
+        <a href={settings.footer.ctaHref} class="footer-link footer-link--accent">
+          <span class="footer-link__shell footer-link__shell--accent" aria-hidden="true"></span>
+          <span class="footer-link__content">
+            <span class="footer-link__label">{settings.footer.ctaLabel}</span>
+            <Icon name="arrow-up-right" class="footer-link__icon" />
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Figma 2330:4477 — full-bleed wordmark -->
+  <div class="footer__marquee" aria-hidden="true">
+    <span>{settings.siteName}</span><span>{settings.siteName}</span><span>{settings.siteName}</span>
+  </div>
+
+  <div class="container footer__inner footer__inner--bottom">
+    <div class="footer__bottom">
+      <p class="footer__copyright">{settings.footer.copyright}</p>
+      <nav class="footer__legal" aria-label="Юридична інформація">
+        {
+          legalLinks.map((link) => (
+            <a href={link.href} class="footer__legal-link">
+              {link.label}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+</footer>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  .footer.section {
+    padding-block: 5rem 0; // 80px top mobile; bottom via inner
+
+    @include from('lg') {
+      padding-block: 7.5rem 0; // 120px top desktop
+    }
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+
+    &--bottom {
+      padding-bottom: 5rem;
+
+      @include from('lg') {
+        padding-bottom: 7.5rem;
+      }
+    }
+  }
+
+  .footer__top {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-7); // 40px mobile
+    width: 100%;
+    max-width: 21.375rem; // 342px mobile
+    margin-inline: auto;
+    text-align: left;
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-8);
+      max-width: none;
+      margin-inline: 0;
+      text-align: left;
+      width: 100%;
+    }
+  }
+
+  // Figma 2332:5467 — Body 1: Roboto Mono 20px / 1.4, fixed 442px
+  .footer__quote {
+    font-family: var(--font-mono);
+    font-size: 1.25rem; // 20px
+    font-weight: var(--fw-regular);
+    line-height: 1.4;
+    color: var(--color-text-on-light);
+    margin: 0;
+    width: 100%;
+
+    @include from('lg') {
+      flex: 0 0 27.625rem; // 442px — Figma width
+      width: 27.625rem;
+      max-width: 27.625rem;
+    }
+  }
+
+  // Figma 2332:5468 — 442px grid, 213×62 keys, 16px gap
+  .footer__links {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4); // 16px
+    width: 100%;
+    flex-shrink: 0;
+
+    @include from('lg') {
+      display: grid;
+      grid-template-columns: repeat(2, 13.3125rem); // 213px
+      width: 27.625rem; // 442px
+    }
+  }
+
+  // Figma keycap: shell image + label/icon overlay grid
+  .footer-link {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    width: 100%;
+    height: 3.875rem; // 62px
+    border-radius: var(--radius-md);
+    color: var(--color-text-on-light);
+    text-decoration: none;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      filter var(--duration-base) var(--ease-out);
+
+    @include from('lg') {
+      width: 13.3125rem; // 213px
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      filter: drop-shadow(4px 4px 10px rgba(1, 1, 1, 0.18));
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+
+    &--accent {
+      color: var(--color-surface-50);
+
+      &:hover {
+        filter: drop-shadow(4px 4px 10px rgba(254, 83, 14, 0.6));
+      }
+    }
+  }
+
+  .footer-link__shell {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+
+    // Figma 2332:5470 — exported keycap shells
+    &--light {
+      background-image: url('/images/ui/footer-key-light-shell-mobile.png');
+
+      @include from('lg') {
+        background-image: url('/images/ui/footer-key-light-shell.png');
+      }
+    }
+
+    // Same active shell as .btn--primary — size-matched to avoid stretch artifacts
+    &--accent {
+      background-color: var(--color-accent);
+      background-image: url('/images/ui/btn-primary-shell-mobile.png');
+
+      @include from('lg') {
+        background-image: url('/images/ui/btn-primary-shell-213.png');
+      }
+    }
+  }
+
+  .footer-link__content {
+    grid-area: 1 / 1;
+    z-index: 1;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: calc(100% - 4.125rem); // 33px side inset mobile
+    margin-inline: 2.0625rem;
+
+    @include from('lg') {
+      width: calc(100% - 4.75rem); // 38px side inset desktop
+      margin-inline: 2.375rem;
+    }
+  }
+
+  .footer-link__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm); // 14px
+    font-weight: var(--fw-medium);
+    line-height: 1.4;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .footer-link__icon {
+    width: 1rem; // 16px
+    height: 1rem;
+    flex-shrink: 0;
+  }
+
+  // Figma 2330:4477 / 2332:6281 — centered wordmark with gap between repeats
+  .footer__marquee {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem; // 24px mobile — Figma 2332:6281
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    margin-block: 5rem; // 80px mobile
+    padding-inline: 0;
+    overflow: hidden;
+    font-family: var(--font-pixel);
+    font-weight: var(--fw-regular);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-size: 5rem; // 80px mobile
+    white-space: nowrap;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+
+    @include from('lg') {
+      margin-block: 7.5rem; // 120px
+      font-size: 12.5rem; // 200px
+      gap: 5rem; // 80px — Figma 2330:4477
+    }
+
+    span {
+      flex: 0 0 auto;
+    }
+  }
+
+  .footer__bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-7); // 40px mobile
+    width: 100%;
+    max-width: 21.4375rem; // 343px
+    margin-inline: auto;
+    text-align: center;
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-6);
+      max-width: none;
+      margin-inline: 0;
+      text-align: left;
+    }
+  }
+
+  .footer__copyright {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--fs-body); // 16px
+    font-weight: var(--fw-regular);
+    line-height: 1.2;
+    color: var(--color-surface-200);
+  }
+
+  .footer__legal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5); // 24px mobile
+
+    @include from('lg') {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: var(--space-6); // 32px
+    }
+  }
+
+  .footer__legal-link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-regular);
+    line-height: 1.2;
+    color: var(--color-surface-200);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--color-text-on-light);
+    }
+  }
+</style>

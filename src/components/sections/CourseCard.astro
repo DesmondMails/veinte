@@ -1,0 +1,117 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from '@/components/ui/Icon.astro';
+
+interface Props {
+  course: CollectionEntry<'courses'>;
+  index?: number;
+  idSuffix?: string;
+  carousel?: boolean;
+}
+
+const { course, index = 0, idSuffix = '', carousel = false } = Astro.props;
+const { title, subtitle, description, icon, iconVariant, currency, priceCurrent, priceOld, seatsLeft, ctaHref } =
+  course.data;
+const program = course.data.program ?? [];
+
+const panelId = `course-details-${course.id}${idSuffix}`;
+const splitAt = Math.ceil(program.length / 2);
+const programCol1 = program.slice(0, splitAt);
+const programCol2 = program.slice(splitAt);
+
+const formatProgramNumber = (n: number) => String(n).padStart(2, '0');
+---
+
+<li
+  class="course-row"
+  {...(carousel ? {} : { 'data-reveal': true, 'data-reveal-index': index })}
+  data-accordion-item
+  data-open="false"
+  {...(carousel ? { 'data-carousel-item': true } : {})}
+>
+  <div class="course-row__main">
+    <div class="course-row__content">
+      <div class="course-row__lead">
+        <span class={`course-row__keycap course-row__keycap--${iconVariant}`} aria-hidden="true">
+          <Icon name={icon} class="course-row__keycap-icon" />
+        </span>
+
+        <h3 class="course-row__title">
+          <span class="course-row__title-line">{title}</span>
+          <span class="course-row__title-line course-row__title-line--accent">{subtitle}</span>
+        </h3>
+      </div>
+
+      <p class="course-row__description">{description}</p>
+
+      <div class="course-row__price-wrap">
+        <div class="course-row__price">
+          <span class="course-row__price-current">
+            {currency}
+            {priceCurrent}
+          </span>
+          <span class="course-row__price-old">
+            {currency}
+            {priceOld}
+          </span>
+        </div>
+        <span class="course-row__seats">Залишилось {seatsLeft} місць</span>
+      </div>
+    </div>
+
+    <div class="course-row__actions">
+      <a href={ctaHref} class="btn btn--primary btn--size-course course-row__cta">Записатись</a>
+      <button
+        type="button"
+        class="course-row__toggle"
+        aria-expanded="false"
+        aria-controls={panelId}
+        data-accordion-trigger
+      >
+        <span class="course-row__toggle-text">
+          <span class="course-row__toggle-label course-row__toggle-label--more">Детальніше</span>
+          <span class="course-row__toggle-label course-row__toggle-label--less" aria-hidden="true">згорнути</span>
+        </span>
+        <span class="course-row__toggle-icons" aria-hidden="true">
+          <span class="course-row__toggle-icon course-row__toggle-icon--more">
+            <Icon name="plus" />
+          </span>
+          <span class="course-row__toggle-icon course-row__toggle-icon--less">
+            <Icon name="minus" />
+          </span>
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <div class="course-row__panel" id={panelId} data-accordion-panel aria-hidden="true">
+    <div class="course-row__panel-inner">
+      <div class="course-row__panel-content">
+        <hr class="course-row__divider" />
+        <div class="course-row__program">
+          <h4 class="course-row__program-title">Програма курсу:</h4>
+          <div class="course-row__program-cols">
+            <ol class="course-row__program-col">
+              {programCol1.map((item, i) => (
+                <li class="course-row__program-item">
+                  <span class="course-row__program-num">{formatProgramNumber(i + 1)}</span>
+                  <span class="course-row__program-text">{item}</span>
+                </li>
+              ))}
+            </ol>
+            {programCol2.length > 0 && (
+              <ol class="course-row__program-col">
+                {programCol2.map((item, i) => (
+                  <li class="course-row__program-item">
+                    <span class="course-row__program-num">{formatProgramNumber(splitAt + i + 1)}</span>
+                    <span class="course-row__program-text">{item}</span>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>

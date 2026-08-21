@@ -1,0 +1,30 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import LegalLayout from '@layouts/LegalLayout.astro';
+import LegalPage from '@components/legal/LegalPage.astro';
+import { getSiteSettings } from '@/lib/content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('legal');
+
+  return entries.map((entry) => ({
+    params: { legal: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'legal'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, updatedDate } = entry.data;
+const settings = await getSiteSettings();
+---
+
+<LegalLayout title={`${title} — ${settings.siteName}`} description={title}>
+  <LegalPage title={title} updatedDate={updatedDate}>
+    <Content />
+  </LegalPage>
+</LegalLayout>

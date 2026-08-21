@@ -1,0 +1,684 @@
+---
+import { whyUsItems } from '@/data/whyUs';
+import WhyUsMobileFolder from '@/components/sections/WhyUsMobileFolder.astro';
+
+const count = whyUsItems.length;
+---
+
+<section class="section why" aria-labelledby="why-heading">
+  <div class="container why__container">
+    <div class="why__heading-wrap">
+      <h2 id="why-heading" class="why__heading" data-reveal>
+        <span class="why__heading-white">Чому</span>
+        <span class="accent why__heading-accent">саме ми?</span>
+      </h2>
+    </div>
+
+    <!-- Mobile: CSS folder tabs — fluid width (Figma 2274:4067). -->
+    <div class="why__mobile-wrap">
+      <WhyUsMobileFolder />
+    </div>
+
+    {/*
+      @deprecated Image-based mobile folder — fixed 342×372 SVG shells + clip-path tab
+      notches. Replaced by WhyUsMobileFolder.astro. Kept for reference only.
+    */}
+    <div class="why__mobile why__mobile--deprecated" hidden aria-hidden="true">
+      <div class="why__mobile-folder">
+        <div class="why__mobile-body">
+          <!-- Folder shell: one full SVG per active tab (Figma folder-mobile-N-orange). -->
+          {
+            whyUsItems.map((item, index) => (
+              <img
+                class:list={['why__mobile-bg', { 'is-active': index === 0 }]}
+                data-why-mobile-bg={index}
+                src={item.folderMobileActive}
+                alt=""
+                aria-hidden="true"
+                width="342"
+                height="372"
+                decoding="async"
+              />
+            ))
+          }
+
+          <!-- Inactive tab notches — dark folder-mobile-N.svg clips (same assets as Figma). -->
+          <div class="why__mobile-tab-shapes" aria-hidden="true">
+            {
+              whyUsItems.map((item, index) => (
+                <img
+                  class:list={['why__mobile-tab-shape', { 'is-hidden': index === 0 }]}
+                  data-why-tab-shape={index}
+                  src={item.folderMobile}
+                  alt=""
+                  width="342"
+                  height="372"
+                  decoding="async"
+                  style={`--tab-mobile-left:${item.tabMobileLeft}px`}
+                />
+              ))
+            }
+          </div>
+
+          <div class="why__mobile-panels">
+            {
+              whyUsItems.map((item, index) => (
+                <div
+                  class:list={['why__mobile-panel', { 'is-active': index === 0 }]}
+                  role="tabpanel"
+                  id={`why-panel-${index}`}
+                  aria-labelledby={`why-tab-${index}`}
+                  data-why-panel={index}
+                  hidden={index !== 0}
+                >
+                  <div class="why__mobile-panel-inner">
+                    <span class="why__keycap why__keycap--mobile" aria-hidden="true">
+                      <span class="why__keycap-icon">{item.icon}</span>
+                    </span>
+                    <div class="why__mobile-panel-copy">
+                      <p class="why__mobile-panel-title">{item.title}</p>
+                      <p class="why__mobile-panel-description">{item.description}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <!-- Tab labels sit above images but only in the notch row — never over card content. -->
+        <div class="why__mobile-tablist" role="tablist" aria-label="Переваги Veinte">
+          {
+            whyUsItems.map((item, index) => (
+              <button
+                type="button"
+                class="why__mobile-tab"
+                role="tab"
+                id={`why-tab-${index}`}
+                aria-controls={`why-panel-${index}`}
+                aria-selected={index === 0 ? 'true' : 'false'}
+                tabindex={index === 0 ? 0 : -1}
+                data-why-tab={index}
+                style={`--tab-mobile-left:${item.tabMobileLeft}px`}
+              >
+                {index + 1}/
+              </button>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop: scroll-driven folder stack magnetize. -->
+    <div class="why__scroll-stage" data-why-scroll-stage>
+      <ul
+        class="why__stack"
+        data-why-stack
+        data-reveal
+        style={`--count:${count}`}
+      >
+        {
+          whyUsItems.map((item, index) => (
+            <li
+              class="why__folder"
+              style={`--layer:${index + 1}; --i:${index}; --tab-label-left:${(item.tabLabelLeft / 901) * 100}%`}
+            >
+              <div class="why__folder-card">
+                <img
+                  class="why__folder-bg why__folder-bg--idle"
+                  src={item.folderShape}
+                  alt=""
+                  aria-hidden="true"
+                  width="901"
+                  height="204"
+                  decoding="async"
+                />
+                <img
+                  class="why__folder-bg why__folder-bg--active"
+                  src={item.folderShapeActive}
+                  alt=""
+                  aria-hidden="true"
+                  width="901"
+                  height="204"
+                  decoding="async"
+                />
+
+                <div class="why__tab-label" aria-hidden="true">
+                  {index + 1}/
+                </div>
+
+                <div class="why__panel">
+                  <div class="why__panel-inner">
+                    <span class="why__keycap" aria-hidden="true">
+                      <span class="why__keycap-icon">{item.icon}</span>
+                    </span>
+                    <div class="why__panel-copy">
+                      <p class="why__panel-title">{item.title}</p>
+                      <p class="why__panel-description">{item.description}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '@scripts/why-mobile-tabs';
+  import '@scripts/why-stack-scroll';
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+  @use '../../styles/components/button' as btn;
+
+  // Figma 2264:418 — list gap 16px, cards 204px.
+  // Figma 2274:5546 — stack overlap -144px (60px tab step), height 444px.
+  // Mobile folder — Figma 2274:4067 / 2274:4080.
+  $folder-width-mobile: 21.375rem; // 342px
+  $folder-height-mobile: 23.25rem; // 372px
+  $mobile-tab-width: 3.9375rem; // 63px
+  $mobile-tab-notch-height: 5.625rem; // 90px — Figma Folder tab shape
+  $mobile-tab-hit-height: 3.125rem; // 50px — tab label row, above card body (y=76)
+  $mobile-content-top: 4.75rem; // 76px
+  $mobile-panel-height: 17.5rem; // 272px
+  $mobile-panel-inset: 1.5rem; // 24px
+  $folder-height-desktop: 12.75rem; // 204px
+  $list-gap: 1rem; // 16px
+  $stack-overlap: -9rem; // -144px
+  $stack-scroll-room: 22rem; // magnetize + brief hold after pile forms
+
+  .why {
+    padding-top: 1rem;
+    padding-bottom: 5rem;
+  }
+
+  .why__container {
+    display: flex;
+    flex-direction: column;
+
+    @include until('lg') {
+      gap: 2.5rem; // 80px — Figma mobile spacing heading → folder
+    }
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: var(--space-9);
+    }
+  }
+
+  .why__heading-wrap {
+    width: 100%;
+
+    @include from('lg') {
+      position: sticky;
+      top: 8rem;
+      flex: 0 0 auto;
+      width: 21.5rem;
+      align-self: flex-start;
+    }
+  }
+
+  .why__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; // 8px — Figma 2268:3065
+    line-height: var(--lh-tight);
+    text-align: center;
+
+    @include from('lg') {
+      gap: var(--space-2);
+      text-align: left;
+    }
+  }
+
+  .why__heading-white {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 2rem; // 32px — Figma mobile
+    line-height: 0.9;
+
+    @include from('lg') {
+      font-size: var(--fs-h2);
+      line-height: var(--lh-tight);
+    }
+  }
+
+  .why__heading-accent {
+    font-size: 2.25rem; // 36px — Figma mobile
+    line-height: 0.8;
+    letter-spacing: -0.1875rem; // -3px
+
+    @include from('lg') {
+      font-size: calc(var(--fs-h2) * 1.15);
+      line-height: var(--lh-tight);
+      letter-spacing: -0.03em;
+    }
+  }
+
+  // ── Mobile (active: CSS folder) ───────────────────────────────────
+
+  .why__mobile-wrap {
+    width: 100%;
+
+    @include from('lg') {
+      display: none;
+    }
+  }
+
+  // @deprecated — image-based folder, kept for reference.
+  .why__mobile--deprecated {
+    display: none !important;
+  }
+
+  // ── Mobile folder tabs (deprecated SVG implementation) ──────────────
+
+  .why__mobile {
+    width: 100%;
+    max-width: $folder-width-mobile;
+    margin-inline: auto;
+
+    @include from('lg') {
+      display: none;
+    }
+  }
+
+  .why__mobile-folder {
+    position: relative;
+    width: 100%;
+    height: $folder-height-mobile;
+  }
+
+  .why__mobile-tablist {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: $mobile-tab-hit-height;
+    pointer-events: none;
+  }
+
+  .why__mobile-tab {
+    position: absolute;
+    top: 0;
+    left: var(--tab-mobile-left);
+    width: $mobile-tab-width;
+    height: $mobile-tab-hit-height;
+    pointer-events: auto;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-body-sm);
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--color-surface-200);
+    cursor: pointer;
+
+    &[aria-selected='true'] {
+      color: var(--color-surface-50);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
+  }
+
+  .why__mobile-body {
+    position: absolute;
+    inset: 0;
+  }
+
+  .why__mobile-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0;
+
+    &.is-active {
+      z-index: 2;
+      opacity: 1;
+    }
+  }
+
+  // Inactive tab notches — clipped from the same folder SVGs as the active tab.
+  .why__mobile-tab-shapes {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .why__mobile-tab-shape {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    clip-path: inset(
+      0 calc(100% - var(--tab-mobile-left) - #{$mobile-tab-width}) calc(100% - #{$mobile-tab-notch-height})
+        var(--tab-mobile-left)
+    );
+    opacity: 1;
+
+    &.is-hidden {
+      opacity: 0;
+    }
+  }
+
+  .why__mobile-panels {
+    position: absolute;
+    z-index: 2;
+    top: $mobile-content-top;
+    left: $mobile-panel-inset;
+    right: $mobile-panel-inset;
+    height: $mobile-panel-height;
+    pointer-events: none;
+
+    .why__mobile-panel.is-active {
+      pointer-events: auto;
+    }
+  }
+
+  .why__mobile-panel {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0;
+    pointer-events: none;
+
+    &.is-active {
+      z-index: 2;
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+
+  .why__mobile-panel-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    text-align: left;
+  }
+
+  .why__keycap--mobile {
+    width: 4rem; // 64px
+    height: 3.875rem; // 62px
+  }
+
+  .why__mobile-panel-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem; // 24px — Figma 2274:4084
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  .why__mobile-panel-title {
+    margin: 0;
+    font-family: var(--font-pixel);
+    text-transform: uppercase;
+    font-size: 1.25rem; // 20px — Figma H6
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+    color: var(--color-surface-50);
+    max-width: 80%;
+  }
+
+  .why__mobile-panel-description {
+    margin: 0;
+    color: var(--color-surface-50);
+    font-size: var(--fs-body-sm); // 14px
+    line-height: 1.4;
+    margin-top: auto;
+  }
+
+  // ── Desktop scroll stack ────────────────────────────────────────────
+
+  .why__scroll-stage {
+    width: 100%;
+    min-width: 0;
+
+    @include until('lg') {
+      display: none;
+    }
+
+    @include from('lg') {
+      flex: 1 1 auto;
+      min-height: calc(#{$folder-height-desktop} * 5 + #{$list-gap} * 4 + #{$stack-scroll-room});
+    }
+  }
+
+  .why__stack {
+    --stack-progress: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 21.375rem;
+    margin-inline: auto;
+    list-style: none;
+    padding: 0;
+    margin-block: 0;
+
+    @include from('lg') {
+      position: sticky;
+      top: 8rem;
+      max-width: 56.3125rem;
+      margin-inline: 0;
+    }
+  }
+
+  .why__folder {
+    position: relative;
+    flex-shrink: 0;
+    width: 100%;
+    height: $folder-height-mobile;
+    z-index: var(--layer);
+
+    &:not(:last-child) {
+      margin-bottom: $list-gap;
+    }
+
+    @include from('lg') {
+      height: $folder-height-desktop;
+
+      &:not(:last-child) {
+        // 16px → -144px as --stack-progress goes 0 → 1.
+        margin-bottom: calc(#{$list-gap} + var(--stack-progress) * (#{$stack-overlap} - #{$list-gap}));
+      }
+    }
+  }
+
+  .why__folder-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .why__folder-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // Card 5 is orange in both list and stacked states (Figma 2264:418 / 2274:5546).
+  .why__folder-bg--idle {
+    opacity: 1;
+
+    .why__folder:last-child & {
+      opacity: 0;
+    }
+  }
+
+  .why__folder-bg--active {
+    opacity: 0;
+
+    .why__folder:last-child & {
+      opacity: 1;
+    }
+  }
+
+  .why__tab-label {
+    position: absolute;
+    top: 0.5rem;
+    left: var(--tab-label-left);
+    z-index: 2;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-caption);
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--color-surface-200);
+    pointer-events: none;
+
+    .why__folder:last-child & {
+      color: var(--color-surface-50);
+    }
+  }
+
+  .why__panel {
+    position: absolute;
+    z-index: 1;
+    inset-inline: 0;
+    top: 4.75rem;
+    bottom: 0;
+
+    @include from('lg') {
+      top: 5.25rem;
+    }
+  }
+
+  // Cards 1–4 keep content visible while the pile forms; fade near the end.
+  @for $i from 1 through 4 {
+    .why__folder:nth-child(#{$i}) .why__panel {
+      opacity: calc(1 - max(0, (var(--stack-progress) - 0.55) / 0.45));
+
+      @include until('lg') {
+        opacity: 1;
+      }
+    }
+  }
+
+  .why__panel-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    height: 100%;
+    padding: 0 var(--space-5) var(--space-6);
+    text-align: center;
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-6);
+      padding: 0 2.5rem 1.25rem;
+      text-align: left;
+    }
+  }
+
+  .why__keycap {
+    @include btn.keycap-shell(8px);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 4rem;
+    height: 3.875rem;
+
+    &::before {
+      background-image: url('/images/ui/keycap-shell.png');
+      background-size: 100% 100%;
+      background-position: center;
+    }
+  }
+
+  .why__keycap-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .why__panel-copy {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    min-width: 0;
+
+    @include from('lg') {
+      flex: 1 1 auto;
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-4);
+    }
+  }
+
+  .why__panel-title {
+    margin: 0;
+    font-family: var(--font-pixel);
+    text-transform: uppercase;
+    font-size: 0.9375rem;
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+    color: var(--color-surface-50);
+
+    @include from('lg') {
+      flex: 0 0 50%;
+      max-width: 22.15625rem;
+      font-size: 1.25rem;
+    }
+  }
+
+  .why__panel-description {
+    margin: 0;
+    color: var(--color-surface-50);
+    font-size: var(--fs-body-sm);
+    line-height: var(--lh-normal);
+
+    @include from('lg') {
+      flex: 1 1 auto;
+      max-width: 22.15625rem;
+    }
+
+    .why__folder:not(:last-child) & {
+      @include from('lg') {
+        color: var(--color-surface-200);
+      }
+    }
+  }
+
+  // Last card description stays white; body text on card 5 list uses white per Figma.
+  .why__folder:last-child .why__panel-description {
+    color: var(--color-surface-50);
+  }
+</style>

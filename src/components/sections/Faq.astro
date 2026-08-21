@@ -1,0 +1,153 @@
+---
+import { getFaqItems } from '@/lib/content';
+
+const items = await getFaqItems();
+---
+
+<section class="section faq" aria-labelledby="faq-heading">
+  <div class="container faq__container">
+    <h2 id="faq-heading" class="faq__title" data-reveal>
+      <span class="faq__title-white">
+        Маєте<span class="faq__title-space"> </span><br class="faq__title-br" aria-hidden="true" /><span
+          class="faq__title-continued">запитання?</span
+        >
+      </span>
+      <span class="accent faq__title-accent">
+        Ми<span class="faq__title-space"> </span><br class="faq__title-br" aria-hidden="true" /><span
+          class="faq__title-continued">відповіли</span
+        >
+      </span>
+    </h2>
+
+    <div class="faq__list">
+      {
+        items.map((item, index) => (
+          <div
+            class="accordion-item"
+            data-accordion-item
+            data-accordion-group="faq"
+            data-open={item.openByDefault ? 'true' : 'false'}
+          >
+            <button
+              type="button"
+              class="accordion-item__trigger"
+              data-accordion-trigger
+              aria-expanded={item.openByDefault ? 'true' : 'false'}
+              aria-controls={`faq-panel-${index}`}
+              id={`faq-trigger-${index}`}
+            >
+              <span class="accordion-item__question">{item.question}</span>
+              <span class="accordion-item__icon" aria-hidden="true" />
+            </button>
+            <div
+              class="accordion-item__panel"
+              id={`faq-panel-${index}`}
+              role="region"
+              aria-labelledby={`faq-trigger-${index}`}
+              aria-hidden={item.openByDefault ? 'false' : 'true'}
+            >
+              <div class="accordion-item__panel-inner">
+                <div class="accordion-item__panel-content">
+                  <p class="accordion-item__body">{item.answer}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  import '@scripts/accordion';
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  .faq__container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-9); // 64px — Figma mobile title → list
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-7);
+    }
+  }
+
+  .faq__title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2); // 8px — Figma title lines
+    line-height: var(--lh-tight);
+    width: 100%;
+    max-width: 21.375rem; // 342px mobile
+    text-align: center;
+    align-items: center;
+
+    @include from('lg') {
+      flex: 0 0 27.6875rem; // 443px
+      width: 27.6875rem;
+      max-width: none;
+      align-items: flex-start;
+      text-align: left;
+      align-self: flex-start;
+      position: sticky;
+      top: 8rem;
+    }
+  }
+
+  .faq__title-br {
+    display: none;
+
+    @include from('lg') {
+      display: block;
+    }
+  }
+
+  @include from('lg') {
+    .faq__title-space {
+      display: none;
+    }
+  }
+
+  .faq__title-white {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 2rem; // 32px mobile
+    line-height: 0.9;
+
+    @include from('lg') {
+      font-size: 4rem; // 64px desktop
+      letter-spacing: -0.03em;
+    }
+  }
+
+  .faq__title-accent {
+    font-size: 2.25rem; // 36px mobile
+    line-height: 0.8;
+    letter-spacing: -0.1875rem; // -3px
+
+    @include from('lg') {
+      font-size: 4.875rem; // 78px desktop
+    }
+  }
+
+  .faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6); // 32px — Figma between FAQ items
+    width: 100%;
+
+    @include from('lg') {
+      flex: 0 1 49.1875rem; // 787px
+      max-width: 49.1875rem;
+    }
+  }
+</style>

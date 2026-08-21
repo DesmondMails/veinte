@@ -1,0 +1,283 @@
+---
+/**
+ * Mobile "Чому саме ми?" — CSS folder tabs (fluid width).
+ * Replaces the image-based implementation in WhyUs.astro (deprecated).
+ *
+ * Figma refs: 2274:4067 (folder), 2274:4080 (inner content), 2274:4105 (tabs).
+ * Proportions at 342px design width → CSS clamp / % for responsive scaling.
+ */
+import { whyUsItems } from '@/data/whyUs';
+
+/**
+ * Tab ear shape tuning (viewBox 0 0 63 50).
+ * Edit these to adjust the folder tab silhouette:
+ * - flatTopEnd: x where the flat top ends (↑ = longer flat top)
+ * - rightCurveEnd: y where the right slope meets the base (↓ = steeper angle)
+ * - topLeftRadius: x/y of the top-left corner round (Q control)
+ */
+const tabEar = {
+  flatTopEnd: 24,
+  rightCurveEnd: 62,
+  topLeftStart: 8,
+} as const;
+
+const tabEarFill = `M1 50H62V${tabEar.rightCurveEnd}Q62 0.5 ${tabEar.flatTopEnd} 0.5H${tabEar.topLeftStart}Q1 0.5 1 ${tabEar.topLeftStart}V50Z`;
+const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftStart} 0.5H${tabEar.flatTopEnd}Q62 0.5 62 ${tabEar.rightCurveEnd}V50`;
+---
+
+<div class="why-folder" data-why-mobile data-active-index="0" data-reveal>
+  <div class="why-folder__shell">
+    <div class="why-folder__tabs" role="tablist" aria-label="Переваги Veinte">
+      {
+        whyUsItems.map((_, index) => (
+          <button
+            type="button"
+            class="why-folder__tab"
+            role="tab"
+            id={`why-tab-${index}`}
+            aria-controls={`why-panel-${index}`}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            tabindex={index === 0 ? 0 : -1}
+            data-why-tab={index}
+          >
+            <svg
+              class="why-folder__tab-shape"
+              viewBox="0 0 63 50"
+              preserveAspectRatio="none"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path class="why-folder__tab-fill" d={tabEarFill} />
+              <!-- Inactive tabs only — no bottom edge. Active tab has no stroke. -->
+              <path
+                class="why-folder__tab-stroke"
+                fill="none"
+                vector-effect="non-scaling-stroke"
+                d={tabEarStrokeIdle}
+              />
+            </svg>
+            <span class="why-folder__tab-label">{index + 1}/</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="why-folder__body">
+      {
+        whyUsItems.map((item, index) => (
+          <div
+            class:list={['why-folder__panel', { 'is-active': index === 0 }]}
+            role="tabpanel"
+            id={`why-panel-${index}`}
+            aria-labelledby={`why-tab-${index}`}
+            data-why-panel={index}
+            hidden={index !== 0}
+          >
+            <div class="why-folder__panel-inner">
+              <span class="why-folder__keycap" aria-hidden="true">
+                <span class="why-folder__keycap-icon">{item.icon}</span>
+              </span>
+              <div class="why-folder__panel-copy">
+                <p class="why-folder__panel-title">{item.title}</p>
+                <p class="why-folder__panel-description">{item.description}</p>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+  @use '../../styles/components/button' as btn;
+
+  // Figma 342×372 — converted to fluid tokens (scale with container width).
+  .why-folder {
+    --folder-stroke: #2c2e31;
+    --folder-tab-inactive: #171717;
+    --folder-tab-gap: clamp(0.25rem, 1.8vw, 0.4375rem); // ~7px @ 342
+    --folder-tab-height: clamp(2.75rem, 14.6vw, 3.125rem); // 50px @ 342
+    --folder-body-padding: clamp(1.25rem, 7vw, 1.5rem); // 24px @ 342
+    --folder-body-radius: clamp(0.375rem, 2.3vw, 0.5rem);
+    --folder-copy-gap: clamp(1.25rem, 7vw, 1.5rem); // 24px
+    --folder-keycap-size: clamp(3.5rem, 18.7vw, 4rem); // 64px
+    --folder-keycap-height: clamp(3.375rem, 18.1vw, 3.875rem); // 62px
+    --folder-title-size: clamp(1.125rem, 5.8vw, 1.25rem); // 20px
+    --folder-icon-gap: clamp(1.5rem, 9.3vw, 2rem); // ~32px keycap → copy
+
+    width: 100%;
+  }
+
+  .why-folder__shell {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .why-folder__tabs {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--folder-tab-gap);
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  .why-folder__tab {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    height: var(--folder-tab-height);
+    margin: 0;
+    padding: 0;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+      z-index: 4;
+    }
+
+    &[aria-selected='true'] {
+      z-index: 3;
+    }
+  }
+
+  .why-folder__tab-shape {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .why-folder__tab-fill {
+    fill: var(--folder-tab-inactive);
+
+    .why-folder__tab[aria-selected='true'] & {
+      fill: var(--color-accent);
+    }
+  }
+
+  .why-folder__tab-stroke {
+    stroke: var(--folder-stroke);
+    stroke-width: 1;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+
+    .why-folder__tab[aria-selected='true'] & {
+      display: none;
+    }
+  }
+
+  .why-folder__tab-label {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-mono);
+    font-weight: var(--fw-bold);
+    font-size: var(--fs-body-sm);
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--color-surface-200);
+    pointer-events: none;
+
+    .why-folder__tab[aria-selected='true'] & {
+      color: var(--color-surface-50);
+    }
+  }
+
+  .why-folder__body {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 20rem;
+
+    padding: var(--folder-body-padding);
+    border: 1px solid var(--folder-stroke);
+    border-top: none;
+    border-radius: 0 0 var(--folder-body-radius)
+      var(--folder-body-radius);
+    background: var(--color-accent);
+  }
+
+  .why-folder__panel {
+    display: none;
+
+    &.is-active {
+      display: block;
+    }
+
+    &[hidden] {
+      display: none !important;
+    }
+  }
+
+  .why-folder__panel-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .why-folder__keycap {
+    @include btn.keycap-shell(8px);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: var(--folder-keycap-size);
+    height: var(--folder-keycap-height);
+
+    &::before {
+      background-image: url('/images/ui/keycap-shell.png');
+      background-size: 100% 100%;
+      background-position: center;
+    }
+  }
+
+  .why-folder__keycap-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.25rem, 6.5vw, 1.5rem);
+    line-height: 1;
+  }
+
+  .why-folder__panel-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--folder-copy-gap);
+    width: 100%;
+    margin-top: var(--folder-icon-gap);
+  }
+
+  .why-folder__panel-title {
+    margin: 0;
+    max-width: 80%;
+    font-family: var(--font-pixel);
+    text-transform: uppercase;
+    font-size: var(--folder-title-size);
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+    color: var(--color-surface-50);
+  }
+
+  .why-folder__panel-description {
+    margin: 0;
+    color: var(--color-surface-50);
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+  }
+</style>

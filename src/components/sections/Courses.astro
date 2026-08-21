@@ -1,0 +1,618 @@
+---
+import CourseCard from '@/components/sections/CourseCard.astro';
+import { getCourses } from '@/lib/content';
+
+const courses = await getCourses();
+---
+
+<section class="section courses" aria-labelledby="courses-heading">
+  <img src="/images/courses/courses-bg.png" alt="" class="courses__bg" loading="lazy" width="4096" height="2846" />
+
+  <div class="container courses__container">
+    <header class="courses__head" data-reveal>
+      <h2 id="courses-heading" class="courses__title">
+        <span class="courses__title-line">Який курс іспанської</span>
+        <span class="accent courses__title-accent">підходить саме вам?</span>
+      </h2>
+      <p class="courses__subtitle">
+        Професійні викладачі з досвідом та сучасним підходом до навчання
+      </p>
+    </header>
+
+    <ul class="courses__list courses__list--desktop">
+      {courses.map((course, index) => <CourseCard course={course} index={index} />)}
+    </ul>
+
+    <div class="courses__carousel" data-carousel>
+      <div class="courses__viewport">
+        <ul
+          class="courses__track"
+          data-carousel-track
+          role="region"
+          aria-label="Курси іспанської"
+          tabindex="0"
+        >
+          {
+            courses.map((course, index) => (
+              <CourseCard course={course} index={index} idSuffix="-mobile" carousel />
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="courses__controls">
+        <div class="courses__arrows">
+          <button
+            type="button"
+            class="btn btn--carousel btn--carousel-prev courses__arrow"
+            data-carousel-prev
+            aria-disabled="true"
+            tabindex="-1"
+            aria-label="Попередній курс"
+          ></button>
+          <button
+            type="button"
+            class="btn btn--carousel btn--carousel-next courses__arrow"
+            data-carousel-next
+            aria-disabled="false"
+            aria-label="Наступний курс"
+          ></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '@scripts/accordion';
+  import '@scripts/carousel';
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+  @use '../../styles/components/button' as btn;
+
+  // Figma 2274:5501 (desktop) / 2274:4474 (mobile).
+  $card-border: #dedede;
+  $text-muted: #7b7b7b;
+  $program-text: #2c2e31;
+
+  .courses {
+    position: relative;
+    overflow: hidden;
+    background: #ececec;
+    padding-block: var(--space-10);
+
+    @include from('lg') {
+      padding-block: var(--space-12);
+    }
+  }
+
+  .courses__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .courses__container {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-9); // 64px desktop
+    align-items: center;
+  }
+
+  .courses__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5); // 24px title → subtitle
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .courses__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    line-height: var(--lh-tight);
+  }
+
+  .courses__title-line {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 2rem; // 32px mobile
+    color: var(--color-text-on-light);
+  }
+
+  .courses__title-accent {
+    font-size: 2.25rem; // 36px mobile
+    letter-spacing: -0.08em;
+  }
+
+  .courses__subtitle {
+    max-width: 21.375rem; // 342px mobile
+    font-family: var(--font-mono);
+    font-size: var(--fs-body);
+    line-height: 1.2;
+    color: $text-muted;
+  }
+
+  @include from('lg') {
+    .courses__title-line {
+      font-size: 4rem; // 64px
+      letter-spacing: -0.03em;
+    }
+
+    .courses__title-accent {
+      font-size: 4.875rem; // 78px
+      letter-spacing: -0.03em;
+    }
+
+    .courses__subtitle {
+      max-width: 27rem; // 432px
+    }
+  }
+
+  .courses__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4); // 16px
+    width: 100%;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .courses__list--desktop {
+    @include until('lg') {
+      display: none;
+    }
+  }
+
+  .courses__carousel {
+    width: 100%;
+
+    @include from('lg') {
+      display: none;
+    }
+  }
+
+  .courses__viewport {
+    overflow-x: hidden;
+    overflow-y: visible;
+    width: 100%;
+  }
+
+  .courses__track {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-4);
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline-offset: 6px;
+    }
+
+    :global(.course-row) {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      flex: 0 0 100%;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  .courses__controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: var(--space-6);
+  }
+
+  .courses__arrows {
+    display: flex;
+    gap: var(--space-2);
+  }
+
+  // ── Course card (shared desktop + carousel) ──
+  :global(.course-row) {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    border: 1px solid $card-border;
+    border-radius: var(--radius-md);
+    background: transparent;
+    padding: var(--space-5); // 24px mobile
+    list-style: none;
+
+    @include from('lg') {
+      scroll-snap-align: start;
+      padding: var(--space-7); // 40px
+    }
+  }
+
+  :global(.course-row__main) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7); // 40px — Figma mobile card sections
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-7);
+    }
+  }
+
+  :global(.course-row__content) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5); // 24px
+
+    @include from('lg') {
+      display: grid;
+      grid-template-columns: 22.625rem 19.625rem 12.5625rem; // 362 | 314 | 201 px
+      column-gap: var(--space-9); // 80px
+      align-items: center;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
+  :global(.course-row__lead) {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5); // 24px mobile
+    flex-shrink: 0;
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-5); // 32px
+      width: 22.625rem; // 74 + 32 + 256
+    }
+  }
+
+  :global(.course-row__keycap) {
+    @include btn.keycap-shell(8px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 4.625rem; // 74px
+    height: 4.5rem; // 72px
+
+    &::before {
+      background-size: 100% 100%;
+      background-position: center;
+    }
+  }
+
+  :global(.course-row__keycap--light) {
+    color: var(--color-accent);
+
+    &::before {
+      background-image: url('/images/ui/courses/key-light.png');
+    }
+  }
+
+  :global(.course-row__keycap--dark) {
+    color: var(--color-surface-50);
+
+    &::before {
+      background-image: url('/images/ui/courses/key-dark.png');
+    }
+  }
+
+  :global(.course-row__keycap--accent) {
+    color: var(--color-surface-50);
+
+    &::before {
+      background-image: url('/images/ui/courses/key-accent.png');
+    }
+  }
+
+  :global(.course-row__keycap-icon) {
+    width: 1.5rem; // 24px — Figma
+    height: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  :global(.course-row__title) {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-pixel);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+    color: var(--color-text-on-light);
+    width: 16rem; // 256px
+  }
+
+  :global(.course-row__title-line) {
+    font-size: 1.875rem; // 30px mobile
+
+    @include from('lg') {
+      font-size: 2.5rem; // 40px
+      letter-spacing: -0.025em;
+    }
+  }
+
+  :global(.course-row__title-line--accent) {
+    color: var(--color-accent);
+  }
+
+  :global(.course-row__description) {
+    font-family: var(--font-mono);
+    font-size: 0.75rem; // 12px
+    line-height: 1.4;
+    color: $text-muted;
+
+    @include from('lg') {
+      width: 19.625rem; // 314px
+      max-width: 19.625rem;
+    }
+  }
+
+  :global(.course-row__price-wrap) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    flex-shrink: 0;
+
+    @include from('lg') {
+      width: 12.5625rem; // 201px
+    }
+  }
+
+  :global(.course-row__price) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  :global(.course-row__price-current) {
+    font-family: var(--font-pixel);
+    font-size: 1.875rem; // 30px
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--color-text-on-light);
+  }
+
+  :global(.course-row__price-old) {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body);
+    line-height: 1.2;
+    text-decoration: line-through;
+    color: $text-muted;
+  }
+
+  :global(.course-row__seats) {
+    font-family: var(--font-mono);
+    font-size: 0.625rem; // 10px
+    line-height: 1.4;
+    color: var(--color-accent);
+  }
+
+  :global(.course-row__actions) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    flex-shrink: 0;
+    width: 100%;
+
+    @include from('lg') {
+      width: 9.75rem; // 156px — matches CTA
+    }
+  }
+
+  :global(.course-row__cta) {
+    width: 100%;
+  }
+
+  :global(.course-row__toggle) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.875rem; // 14px
+    font-weight: var(--fw-medium);
+    line-height: 1.4;
+    text-transform: uppercase;
+    color: var(--color-text-on-light);
+  }
+
+  :global(.course-row__toggle-text),
+  :global(.course-row__toggle-icons) {
+    display: grid;
+    place-items: center;
+  }
+
+  :global(.course-row__toggle-label),
+  :global(.course-row__toggle-icon) {
+    grid-area: 1 / 1;
+    transition:
+      opacity var(--duration-base) var(--ease-in-out),
+      transform var(--duration-base) var(--ease-in-out);
+  }
+
+  :global(.course-row__toggle-label--less),
+  :global(.course-row__toggle-icon--less) {
+    opacity: 0;
+    transform: translateY(0.25rem);
+    pointer-events: none;
+  }
+
+  :global(.course-row[data-open='true'] .course-row__toggle-label--more),
+  :global(.course-row[data-open='true'] .course-row__toggle-icon--more) {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+    pointer-events: none;
+  }
+
+  :global(.course-row[data-open='true'] .course-row__toggle-label--less),
+  :global(.course-row[data-open='true'] .course-row__toggle-icon--less) {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  :global(.course-row__toggle-icon) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem; // 32px — Figma
+    height: 2rem;
+    flex-shrink: 0;
+
+    :global(svg) {
+      width: 1.09375rem; // 17.5px inner glyph
+      height: 1.09375rem;
+    }
+  }
+
+  :global(.course-row__panel) {
+    display: grid;
+    grid-template-rows: 0fr;
+    width: 100%;
+    transition: grid-template-rows var(--duration-slow) var(--ease-in-out);
+  }
+
+  :global(.course-row[data-open='true'] .course-row__panel) {
+    grid-template-rows: 1fr;
+  }
+
+  :global(.course-row__panel-inner) {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  :global(.course-row__panel-content) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7); // 40px — spacing + divider + program animate together
+    padding-top: var(--space-7);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.course-row__panel),
+    :global(.course-row__toggle-label),
+    :global(.course-row__toggle-icon) {
+      transition: none;
+    }
+  }
+
+  :global(.course-row__divider) {
+    border: 0;
+    border-top: 1px solid $card-border;
+    margin: 0;
+    width: 100%;
+  }
+
+  :global(.course-row__program) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+
+    @include from('lg') {
+      flex-direction: row;
+      gap: var(--space-9); // 80px
+      align-items: flex-start;
+    }
+  }
+
+  :global(.course-row__program-title) {
+    flex-shrink: 0;
+    font-family: var(--font-pixel);
+    font-size: 1.25rem; // 20px
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+
+    @include from('lg') {
+      width: 10.875rem; // 174px
+    }
+  }
+
+  :global(.course-row__program-cols) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    flex: 1 1 auto;
+    min-width: 0;
+
+    @include from('lg') {
+      flex-direction: row;
+      gap: var(--space-7); // 40px
+    }
+  }
+
+  :global(.course-row__program-col) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5); // 24px between rows
+    flex: 1 1 0;
+    min-width: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  :global(.course-row__program-item) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: $program-text;
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid $card-border;
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+  }
+
+  :global(.course-row__program-num) {
+    flex-shrink: 0;
+    min-width: 1.25rem;
+  }
+
+  :global(.course-row__program-text) {
+    min-width: 0;
+  }
+</style>
+
+</style>

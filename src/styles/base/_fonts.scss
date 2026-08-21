@@ -1,0 +1,19 @@
+// Roboto Mono and Press Start 2P (pixel-font fallback) are self-hosted via
+// @fontsource and imported once in BaseLayout.astro frontmatter — Vite
+// bundles + hashes those files automatically, see:
+//   src/layouts/BaseLayout.astro
+
+// "Pixel Font7" — the real licensed accent typeface from Figma, self-hosted
+// from `public/fonts/pixel/` (see the README there). woff2/woff are
+// generated from the supplied Pixel_Font-7.ttf so the browser downloads the
+// smallest possible file; the family name matches the one referenced by
+// `--font-pixel` in _typography.scss.
+@font-face {
+  font-family: 'Pixel Font7';
+  src:
+    url('/fonts/pixel/pixel-font7-regular.woff2') format('woff2'),
+    url('/fonts/pixel/pixel-font7-regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@layouts/BaseLayout.astro';
+import Hero from '@/components/sections/Hero.astro';
+import ResultsCarousel from '@/components/sections/ResultsCarousel.astro';
+import WhyUs from '@/components/sections/WhyUs.astro';
+import CourseResults from '@/components/sections/CourseResults.astro';
+import LearningProcess from '@/components/sections/LearningProcess.astro';
+import Courses from '@/components/sections/Courses.astro';
+import Faq from '@/components/sections/Faq.astro';
+import CtaForm from '@/components/sections/CtaForm.astro';
+import { getSiteSettings } from '@/lib/content';
+
+const settings = await getSiteSettings();
+---
+
+<BaseLayout title={`${settings.siteName} — ${settings.siteTagline}`} description={settings.hero.description}>
+  <Hero />
+  <ResultsCarousel />
+  <WhyUs />
+  <CourseResults />
+  <LearningProcess />
+  <Courses />
+  <Faq />
+  <CtaForm />
+</BaseLayout>

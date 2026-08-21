@@ -1,0 +1,90 @@
+---
+import '@fontsource/roboto-mono/400.css';
+import '@fontsource/roboto-mono/500.css';
+import '@fontsource/roboto-mono/700.css';
+import '@fontsource/roboto-mono/cyrillic-400.css';
+import '@fontsource/roboto-mono/cyrillic-500.css';
+import '@fontsource/roboto-mono/cyrillic-700.css';
+import '@fontsource/press-start-2p/cyrillic-400.css';
+import '@fontsource/press-start-2p/latin-400.css';
+import '@/styles/main.scss';
+
+import SkipLink from '@components/layout/SkipLink.astro';
+import Header from '@components/layout/Header.astro';
+import Footer from '@components/layout/Footer.astro';
+import { getSiteSettings } from '@/lib/content';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Absolute or site-relative path to the OG image. Defaults to the shared og-image. */
+  ogImage?: string;
+  noindex?: boolean;
+  /** One or more JSON-LD objects to embed in <head>. */
+  structuredData?: Record<string, unknown> | Record<string, unknown>[];
+  /** Legal pages use a static header and dark content shell instead of the hero overlay. */
+  variant?: 'default' | 'legal';
+}
+
+const {
+  title,
+  description,
+  ogImage = '/og-image.jpg',
+  noindex = false,
+  structuredData,
+  variant = 'default',
+} = Astro.props;
+
+const settings = await getSiteSettings();
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
+const jsonLdList = structuredData ? (Array.isArray(structuredData) ? structuredData : [structuredData]) : [];
+---
+
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <meta name="theme-color" content="#010101" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={settings.siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content="uk_UA" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    {
+      jsonLdList.map((entry) => (
+        <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+      ))
+    }
+  </head>
+  <body class:list={[{ 'page--legal': variant === 'legal' }]}>
+    <SkipLink />
+    <Header variant={variant === 'legal' ? 'legal' : 'default'} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import '@scripts/reveal';
+    </script>
+  </body>
+</html>

@@ -1,0 +1,339 @@
+---
+import Icon from '@components/ui/Icon.astro';
+import { getSiteSettings } from '@/lib/content';
+
+interface Props {
+  variant?: 'default' | 'legal';
+}
+
+const { variant = 'default' } = Astro.props;
+const settings = await getSiteSettings();
+const logoHref = variant === 'legal' ? '/' : '/#top';
+
+const navLinks = [
+  { label: 'inst', href: settings.socials.instagram, external: true },
+  { label: 'telegram', href: settings.socials.telegram, external: true },
+  { label: settings.contactEmail, href: `mailto:${settings.contactEmail}`, external: false },
+];
+---
+
+<header class:list={['header', { 'header--static': variant === 'legal' }]}>
+  <div class="container header__inner">
+    <nav class="header__nav" aria-label="Соціальні мережі та контакти">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="header__nav-link"
+            {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <a href={logoHref} class="header__logo">{settings.siteName}</a>
+
+    <a href={settings.ctaPrimary.href} class="btn btn--primary btn--size-header header__cta">{settings.ctaPrimary.label}</a>
+
+    <button
+      type="button"
+      class="header__menu-toggle"
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+      data-menu-toggle
+    >
+      <span class="visually-hidden">Відкрити меню</span>
+      <span class="header__menu-icon header__menu-icon--open"><Icon name="menu" /></span>
+      <span class="header__menu-icon header__menu-icon--close"><Icon name="close" /></span>
+    </button>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu" data-mobile-menu hidden>
+    <div class="mobile-menu__header">
+      <a href={logoHref} class="mobile-menu__logo" data-menu-close-on-click>{settings.siteName}</a>
+      <button type="button" class="mobile-menu__close" data-menu-close aria-label="Закрити меню">
+        <Icon name="close" />
+      </button>
+    </div>
+
+    <nav class="mobile-menu__nav" aria-label="Мобільне меню">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="mobile-menu__link"
+            data-menu-close-on-click
+            {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+
+  if (toggle && menu) {
+    const closeMenu = () => {
+      toggle.setAttribute('aria-expanded', 'false');
+      menu.hidden = true;
+      document.body.style.removeProperty('overflow');
+    };
+
+    const openMenu = () => {
+      toggle.setAttribute('aria-expanded', 'true');
+      menu.hidden = false;
+      document.body.style.overflow = 'hidden';
+    };
+
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      isOpen ? closeMenu() : openMenu();
+    });
+
+    menu.querySelectorAll('[data-menu-close-on-click], [data-menu-close]').forEach((el) => {
+      el.addEventListener('click', closeMenu);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMenu();
+    });
+  }
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  // Figma (2358:1060 / 2358:1132) places the header *inside* the hero frame,
+  // overlaying the retro-computer visual — not as a separate sticky bar that
+  // pushes the hero content down. Absolute positioning restores that stack.
+  .header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-header);
+    background: transparent;
+
+    &--static {
+      position: relative;
+    }
+  }
+
+  :global(.page--legal) {
+    background: var(--color-bg);
+
+    @include from('lg') {
+      background: var(--color-surface-900);
+    }
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+
+    @include until('lg') {
+      padding-inline: 1.5rem; // Figma mobile gutter 24px (2358:1142)
+    }
+
+    @include from('lg') {
+      // Figma: header row starts at y=40 inside the hero frame.
+      padding-block: 2.5rem;
+    }
+  }
+
+  .header__nav {
+    display: none;
+    align-items: center;
+    gap: var(--space-7);
+    width: 12.75rem;
+
+    @include from('lg') {
+      display: flex;
+    }
+  }
+
+  .header__nav-link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm);
+    font-weight: var(--fw-medium);
+    text-transform: uppercase;
+    color: var(--color-surface-200);
+    transition: color var(--duration-base) var(--ease-out);
+
+    &:hover {
+      color: var(--color-surface-50);
+    }
+  }
+
+  .header__logo {
+    // Figma logo uses PP NeueBit Bold; we don't ship that face. Pixel Font7
+    // is the licensed bit font in the repo (same as accent headlines).
+    font-family: var(--font-pixel);
+    font-weight: var(--fw-regular);
+    font-size: 2rem; // Figma mobile: 32px
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--color-surface-50);
+    // Keep the bitmap look crisp instead of browser-smoothed "sans".
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+
+    @include from('lg') {
+      font-size: 2.5rem; // Figma desktop: 40px
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  .header__cta {
+    display: none;
+
+    @include from('lg') {
+      display: inline-flex;
+    }
+  }
+
+  .header__menu-toggle {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    color: var(--color-surface-50);
+    background: transparent;
+    border: 0;
+
+    @include from('lg') {
+      display: none;
+    }
+
+    :global(svg) {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--color-surface-50);
+    }
+
+    :global(svg path) {
+      stroke: currentColor;
+    }
+  }
+
+  .header__menu-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--color-surface-50);
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+
+  .header__menu-icon--close {
+    opacity: 0;
+  }
+
+  .header__menu-toggle[aria-expanded='true'] {
+    .header__menu-icon--open {
+      opacity: 0;
+    }
+    .header__menu-icon--close {
+      opacity: 1;
+    }
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    background: var(--color-bg);
+  }
+
+  // Figma 2274:6161 — logo + close, 24px gutter
+  .mobile-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.5rem; // 24px
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .mobile-menu__logo {
+    font-family: var(--font-pixel);
+    font-weight: var(--fw-regular);
+    font-size: 2rem; // 32px
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--color-surface-50);
+    text-decoration: none;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+  }
+
+  .mobile-menu__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem; // 24px
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-surface-50);
+    font-size: 1.5rem;
+    cursor: pointer;
+
+    :global(svg) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  // Figma 2274:6177 — links at y=133, gap 40px, centered
+  .mobile-menu__nav {
+    position: absolute;
+    top: 8.3125rem; // 133px
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem; // 40px
+    width: 100%;
+    max-width: 9.625rem; // 154px — Figma email width
+  }
+
+  .mobile-menu__link {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body-sm); // 14px
+    font-weight: var(--fw-medium);
+    line-height: 1.4;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-surface-200);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--color-surface-50);
+    }
+  }
+</style>

@@ -1,0 +1,49 @@
+@use 'sass:map';
+
+// Breakpoint tokens.
+// The Figma file only defines an explicit Desktop (1440) and Mobile (390,
+// iPhone 13/14) frame. There is no dedicated tablet frame, so `md`/`lg` are a
+// deliberate, logical in-between step that keeps the same visual language
+// (see plan notes) while preventing the desktop composition from being
+// mechanically squeezed onto tablet widths.
+
+$breakpoints: (
+  'xs': 375px,
+  // small phones (iPhone SE / 320-374 handled as base, no min-width needed)
+  'sm': 480px,
+  // large phones
+  'md': 768px,
+  // tablet portrait
+  'lg': 1024px,
+  // tablet landscape / small laptop
+  'xl': 1280px,
+  // desktop
+  'xxl': 1440px,
+  // Figma desktop canvas
+  'xxxl': 1920px // large desktop,
+);
+
+@function bp($name) {
+  @if not map.has-key($breakpoints, $name) {
+    @error "Unknown breakpoint `#{$name}`.";
+  }
+  @return map.get($breakpoints, $name);
+}
+
+@mixin from($name) {
+  @media (min-width: bp($name)) {
+    @content;
+  }
+}
+
+@mixin until($name) {
+  @media (max-width: bp($name) - 1px) {
+    @content;
+  }
+}
+
+@mixin between($from, $to) {
+  @media (min-width: bp($from)) and (max-width: bp($to) - 1px) {
+    @content;
+  }
+}

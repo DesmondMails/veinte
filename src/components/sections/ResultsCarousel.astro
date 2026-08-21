@@ -1,0 +1,307 @@
+---
+import { Image } from 'astro:assets';
+import { getReviews } from '@/lib/content';
+
+const reviews = await getReviews();
+---
+
+<section class="section results" aria-labelledby="results-heading">
+  <div class="container">
+    <div class="results__head">
+      <h2 id="results-heading" class="results__title" data-reveal>
+        <span class="results__title-white">Краще говорять результати</span>
+        <span class="accent results__title-accent">наших студентів</span>
+      </h2>
+      <p class="results__description" data-reveal data-reveal-index="1">
+        Нижче — історії людей, які вже говорять іспанською
+      </p>
+    </div>
+
+    <div class="results__carousel" data-carousel>
+      <div class="results__viewport">
+        <div class="results__track" data-carousel-track role="region" aria-label="Відгуки студентів" tabindex="0">
+        {
+          [...reviews, ...reviews].map((review) => (
+            <article class="results__card" data-carousel-item>
+              <Image
+                src={review.data.photo}
+                alt={review.data.photoAlt ?? review.data.name}
+                width={328}
+                height={314}
+                class="results__photo"
+                loading="lazy"
+              />
+              <div class="results__text">
+                <h3 class="results__name">{review.data.name}</h3>
+                <div class="results__points">
+                  <p class="results__point-a">{review.data.pointA}</p>
+                  <p class="results__point-b">
+                    <span class="results__point-b-label">Точка B:</span>
+                    {review.data.pointB.replace(/^Точка\s*B:\s*/i, ' ')}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))
+        }
+        </div>
+      </div>
+
+      <div class="results__controls">
+        <div class="results__dots" data-carousel-dots role="tablist" aria-label="Слайди">
+          {
+            reviews.map((_, index) => (
+              <button
+                type="button"
+                class="results__dot"
+                role="tab"
+                aria-label={`Слайд ${index + 1}`}
+                data-carousel-dot={index}
+              />
+            ))
+          }
+        </div>
+
+        <div class="results__arrows">
+          <button type="button" class="btn btn--carousel btn--carousel-prev results__arrow" data-carousel-prev aria-disabled="true" tabindex="-1" aria-label="Попередній відгук"></button>
+          <button type="button" class="btn btn--carousel btn--carousel-next results__arrow" data-carousel-next aria-disabled="false" aria-label="Наступний відгук"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '@scripts/carousel';
+</script>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  .results {
+    @include until('lg') {
+      padding-top: 3.5rem;
+    }
+  }
+
+  .results__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    margin-bottom: var(--space-8);
+    text-align: center;
+
+
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--space-6);
+      text-align: left;
+    }
+  }
+
+  .results__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    line-height: var(--lh-tight);
+    width: 100%;
+
+    @include from('lg') {
+      align-items: flex-start;
+      gap: var(--space-1);
+      width: auto;
+    }
+  }
+
+  .results__title-white {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    font-size: 2rem; // Figma mobile 32px
+    text-align: center;
+
+    @include from('lg') {
+      font-size: var(--fs-h2);
+      text-align: left;
+    }
+  }
+
+  .results__title-accent {
+    font-size: 2.25rem; // Figma mobile 36px
+    letter-spacing: -0.08em;
+    text-align: center;
+
+    @include from('lg') {
+      font-size: calc(var(--fs-h2) * 1.15);
+      letter-spacing: -0.03em;
+      text-align: left;
+    }
+  }
+
+  .results__description {
+    max-width: 20.75rem; // Figma mobile 332px
+    font-size: var(--fs-body);
+    color: var(--color-text-muted);
+
+    @include from('lg') {
+      max-width: 20rem;
+      text-align: right;
+    }
+  }
+
+  .results__carousel {
+    --carousel-card-width: 20.5rem; // 328px — Figma, updated by carousel.ts
+  }
+
+  .results__viewport {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .results__track {
+    display: flex;
+    gap: var(--space-4); // 16px mobile — Figma 2268:3039
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding-bottom: var(--space-2);
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    &:focus-visible {
+      outline-offset: 6px;
+    }
+
+    // All cards fit at Figma width — spread across the row.
+    &[data-carousel-mode='fit'] {
+      justify-content: space-between;
+      gap: 0;
+    }
+
+    @include from('lg') {
+      gap: 1rem;
+      overflow-x: hidden;
+    }
+  }
+
+  .results__card {
+    flex: 0 0 var(--carousel-card-width);
+    width: var(--carousel-card-width);
+    max-width: var(--carousel-card-width);
+    scroll-snap-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    min-width: 0;
+    box-sizing: border-box;
+
+    @include from('lg') {
+      scroll-snap-align: start;
+    }
+  }
+
+  .results__photo {
+    width: 100%;
+    height: 19.625rem; // 314px — Figma
+    object-fit: cover;
+    border-radius: 2px;
+  }
+
+  .results__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    text-align: center;
+
+    @include from('lg') {
+      align-items: flex-start;
+      gap: var(--space-5);
+      text-align: left;
+    }
+  }
+
+  .results__name {
+    font-family: var(--font-pixel);
+    text-transform: uppercase;
+    font-size: 1.5rem; // Figma mobile 24px
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+    width: 100%;
+  }
+
+  .results__points {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+    width: 100%;
+  }
+
+  .results__point-a {
+    color: var(--color-text-muted);
+  }
+
+  .results__point-b {
+    color: var(--color-surface-50);
+  }
+
+  .results__point-b-label {
+    color: var(--color-accent);
+  }
+
+  .results__controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-8);
+    gap: var(--space-4);
+  }
+
+  .results__dots {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .results__dot {
+    width: 1rem; // Figma inactive 16px
+    height: 2px;
+    border-radius: 4px;
+    background: var(--color-surface-700);
+    transition:
+      width var(--duration-base) var(--ease-out),
+      background var(--duration-base) var(--ease-out);
+
+    &[aria-selected='true'] {
+      width: 2.5rem; // Figma active 40px
+      background: var(--color-accent);
+    }
+
+    @include from('lg') {
+      width: 1.25rem;
+
+      &[aria-selected='true'] {
+        width: 6rem;
+      }
+    }
+  }
+
+  .results__arrows {
+    display: flex;
+    gap: var(--space-2);
+
+    @include from('lg') {
+      gap: var(--space-4);
+    }
+  }
+</style>

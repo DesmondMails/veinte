@@ -1,0 +1,192 @@
+---
+import { formatLegalRevisionDate } from '@/lib/format';
+
+interface Props {
+  title: string;
+  updatedDate?: Date;
+}
+
+const { title, updatedDate } = Astro.props;
+---
+
+<article class="legal-page">
+  <div class="container legal-page__inner">
+    <nav class="legal-page__breadcrumbs" aria-label="Навігаційний ланцюжок">
+      <a href="/" class="legal-page__crumb legal-page__crumb--link">Головна</a>
+      <span class="legal-page__crumb" aria-hidden="true">/</span>
+      <span class="legal-page__crumb legal-page__crumb--current" aria-current="page">{title}</span>
+    </nav>
+
+    <header class="legal-page__header">
+      <h1 class="legal-page__title">{title}</h1>
+      {updatedDate && <p class="legal-page__date">{formatLegalRevisionDate(updatedDate)}</p>}
+    </header>
+
+    <div class="legal-prose">
+      <slot />
+    </div>
+  </div>
+</article>
+
+<style lang="scss">
+  @use '../../styles/tokens/breakpoints' as *;
+
+  .legal-page {
+    background: var(--color-bg);
+    padding-block: 2.3125rem 5rem;
+
+    @include from('lg') {
+      background: var(--color-surface-900);
+      padding-block: 2.5rem 7.5rem;
+    }
+  }
+
+  .legal-page__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+
+    @include from('lg') {
+      gap: var(--space-9);
+    }
+  }
+
+  .legal-page__breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .legal-page__crumb {
+    color: var(--color-surface-50);
+
+    &--link {
+      text-decoration: none;
+      transition: color var(--duration-base) var(--ease-out);
+
+      &:hover {
+        color: var(--color-accent);
+      }
+    }
+
+    &--current {
+      color: var(--color-surface-200);
+    }
+  }
+
+  .legal-page__header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    width: 100%;
+
+    @include from('lg') {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-7);
+    }
+  }
+
+  .legal-page__title {
+    margin: 0;
+    max-width: 75%;
+    font-family: var(--font-pixel);
+    font-weight: var(--fw-regular);
+    font-size: 2.5rem;
+    line-height: 0.8;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+
+    @include from('lg') {
+      font-size: 4.875rem;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+  }
+
+  .legal-page__date {
+    margin: 0;
+    flex-shrink: 0;
+    font-size: var(--fs-body-sm);
+    line-height: 1.4;
+    color: var(--color-surface-200);
+    white-space: nowrap;
+
+    @include from('lg') {
+      align-self: center;
+    }
+  }
+
+  .legal-prose {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    :global(p),
+    :global(li) {
+      margin: 0;
+      font-size: var(--fs-body-sm);
+      line-height: 1.4;
+      color: var(--color-surface-200);
+    }
+
+    :global(p + p),
+    :global(li + li) {
+      margin-top: var(--space-4);
+    }
+
+    :global(strong) {
+      font-weight: var(--fw-regular);
+      color: var(--color-surface-50);
+    }
+
+    :global(ul),
+    :global(ol) {
+      margin: 0;
+      padding-left: 1.3125rem;
+    }
+
+    :global(ul) {
+      list-style-type: disc;
+    }
+
+    :global(p + ul),
+    :global(p + ol),
+    :global(ul + p),
+    :global(ol + p) {
+      margin-top: var(--space-4);
+    }
+
+    :global(h2) {
+      margin: var(--space-6) 0 0;
+      font-family: var(--font-pixel);
+      font-weight: var(--fw-regular);
+      font-size: 1.5rem;
+      line-height: 0.9;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--color-surface-50);
+      -webkit-font-smoothing: none;
+      font-smooth: never;
+
+      @include from('lg') {
+        margin-top: var(--space-7);
+      }
+
+      &:first-child {
+        margin-top: 0;
+      }
+    }
+
+    :global(h2 + *) {
+      margin-top: var(--space-5);
+    }
+  }
+</style>

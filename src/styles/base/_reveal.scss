@@ -1,0 +1,20 @@
+// Shared scroll-reveal primitive. Toggled by src/scripts/reveal.ts via
+// IntersectionObserver. Degrades gracefully: if JS never runs (disabled,
+// blocked, or `prefers-reduced-motion`), content stays fully visible because
+// `.reveal` alone has no opacity/transform — only `.reveal.js-armed` does.
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal.js-armed {
+    opacity: 0;
+    transform: translateY(var(--reveal-distance));
+    transition:
+      opacity var(--duration-slow) var(--ease-out),
+      transform var(--duration-slow) var(--ease-out);
+    transition-delay: calc(var(--reveal-stagger-step) * var(--reveal-index, 0));
+  }
+
+  .reveal.js-armed.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
