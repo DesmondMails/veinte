@@ -5,6 +5,8 @@
  * 3. Final stack holds briefly before the next section.
  */
 
+import type { ScrollTrigger as ScrollTriggerInstance } from 'gsap/ScrollTrigger';
+
 const DESKTOP_MQ = '(min-width: 1024px)';
 
 /** Portion of raw scroll where the list stays untouched. */
@@ -23,25 +25,40 @@ function mapStackProgress(raw: number): number {
   return easeInOutQuad(t);
 }
 
-async function initWhyStackScroll() {
+let scrollTrigger: ScrollTriggerInstance | null = null;
+let setupGeneration = 0;
+
+function teardownWhyStackScroll() {
+  scrollTrigger?.kill();
+  scrollTrigger = null;
+
+  const stack = document.querySelector<HTMLElement>('[data-why-stack]');
+  stack?.style.setProperty('--stack-progress', '0');
+}
+
+async function mountWhyStackScroll() {
+  const generation = ++setupGeneration;
+  teardownWhyStackScroll();
+
   const stage = document.querySelector<HTMLElement>('[data-why-scroll-stage]');
   const stack = document.querySelector<HTMLElement>('[data-why-stack]');
   if (!stage || !stack) return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isDesktop = window.matchMedia(DESKTOP_MQ).matches;
-
-  if (prefersReducedMotion || !isDesktop) {
+  if (prefersReducedMotion) {
     stack.style.setProperty('--stack-progress', '0');
     return;
   }
 
   const [{ gsap }, { ScrollTrigger }] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')]);
+  if (generation !== setupGeneration) return;
+  if (!window.matchMedia(DESKTOP_MQ).matches) return;
+
   gsap.registerPlugin(ScrollTrigger);
 
   gsap.set(stack, { '--stack-progress': 0 });
 
-  ScrollTrigger.create({
+  scrollTrigger = ScrollTrigger.create({
     trigger: stage,
     start: 'top 35%',
     end: 'bottom 58%',
@@ -50,6 +67,22 @@ async function initWhyStackScroll() {
       stack.style.setProperty('--stack-progress', mapStackProgress(self.progress).toFixed(4));
     },
   });
+
+  ScrollTrigger.refresh();
+}
+
+function syncWhyStackScroll() {
+  if (window.matchMedia(DESKTOP_MQ).matches) {
+    mountWhyStackScroll();
+  } else {
+    setupGeneration++;
+    teardownWhyStackScroll();
+  }
+}
+
+function initWhyStackScroll() {
+  syncWhyStackScroll();
+  window.matchMedia(DESKTOP_MQ).addEventListener('change', syncWhyStackScroll);
 }
 
 if (document.readyState === 'loading') {

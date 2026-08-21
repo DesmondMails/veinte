@@ -10,6 +10,8 @@
 
 import { courseResultRevealOrder } from '@/data/courseResults';
 
+import type { ScrollTrigger as ScrollTriggerInstance } from 'gsap/ScrollTrigger';
+
 const DESKTOP_MQ = '(min-width: 1024px)';
 
 /** Reveal pacing: early first disk, wider gap before the last two. */
@@ -22,27 +24,78 @@ function getScrollDistance(stage: HTMLElement): number {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : 400;
 }
 
-async function initFloppyScroll() {
+let scrollTrigger: ScrollTriggerInstance | null = null;
+let setupGeneration = 0;
+let gsapRef: typeof import('gsap').gsap | null = null;
+
+function getFloppyElements() {
   const stage = document.querySelector<HTMLElement>('[data-floppy-scroll-stage]');
   const spacer = document.querySelector<HTMLElement>('[data-floppy-scroll-spacer]');
   const deck = document.querySelector<HTMLElement>('[data-floppy-deck]');
-  if (!stage || !spacer || !deck) return;
+  if (!stage || !spacer || !deck) return null;
 
   const cards = Array.from(deck.querySelectorAll<HTMLElement>('[data-floppy-card]'));
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isDesktop = window.matchMedia(DESKTOP_MQ).matches;
+  return { stage, spacer, deck, cards };
+}
 
-  if (prefersReducedMotion || !isDesktop || cards.length === 0) {
-    cards.forEach((card) => {
-      card.style.setProperty('--card-reveal', '1');
-      card.style.opacity = '1';
-    });
-    spacer.style.height = '0px';
-    deck.classList.add('is-interactive');
+function applyFloppyMobileFallback() {
+  const elements = getFloppyElements();
+  if (!elements) return;
+
+  const { spacer, deck, cards } = elements;
+
+  cards.forEach((card) => {
+    card.style.setProperty('--card-reveal', '1');
+    card.style.opacity = '1';
+  });
+  spacer.style.height = '0px';
+  deck.classList.add('is-interactive');
+}
+
+function teardownFloppyScroll() {
+  scrollTrigger?.kill();
+  scrollTrigger = null;
+
+  const elements = getFloppyElements();
+  if (!elements) return;
+
+  const { spacer, deck, cards, stage } = elements;
+  const scrollDistance = getScrollDistance(stage);
+
+  gsapRef?.killTweensOf(cards);
+
+  deck.classList.remove('is-interactive');
+  spacer.style.height = `${scrollDistance}px`;
+
+  cards.forEach((card) => {
+    card.style.removeProperty('--card-reveal');
+    card.style.removeProperty('opacity');
+  });
+}
+
+async function mountFloppyScroll() {
+  const generation = ++setupGeneration;
+  teardownFloppyScroll();
+
+  const elements = getFloppyElements();
+  if (!elements || elements.cards.length === 0) return;
+
+  const { stage, spacer, deck, cards } = elements;
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion || !window.matchMedia(DESKTOP_MQ).matches) {
+    applyFloppyMobileFallback();
     return;
   }
 
   const [{ gsap }, { ScrollTrigger }] = await Promise.all([import('gsap'), import('gsap/ScrollTrigger')]);
+  if (generation !== setupGeneration) return;
+  if (!window.matchMedia(DESKTOP_MQ).matches) {
+    applyFloppyMobileFallback();
+    return;
+  }
+
+  gsapRef = gsap;
   gsap.registerPlugin(ScrollTrigger);
 
   cards.forEach((card) => {
@@ -113,7 +166,7 @@ async function initFloppyScroll() {
     }
   };
 
-  const trigger = ScrollTrigger.create({
+  scrollTrigger = ScrollTrigger.create({
     trigger: stage,
     start: 'top 42%',
     end: `+=${scrollDistance}`,
@@ -124,8 +177,23 @@ async function initFloppyScroll() {
   });
 
   ScrollTrigger.refresh();
-  syncFromProgress(trigger.progress, false);
-  syncSpacerHeight(trigger.progress);
+  syncFromProgress(scrollTrigger.progress, false);
+  syncSpacerHeight(scrollTrigger.progress);
+}
+
+function syncFloppyScroll() {
+  if (window.matchMedia(DESKTOP_MQ).matches) {
+    mountFloppyScroll();
+  } else {
+    setupGeneration++;
+    teardownFloppyScroll();
+    applyFloppyMobileFallback();
+  }
+}
+
+function initFloppyScroll() {
+  syncFloppyScroll();
+  window.matchMedia(DESKTOP_MQ).addEventListener('change', syncFloppyScroll);
 }
 
 if (document.readyState === 'loading') {

@@ -6,9 +6,14 @@
 
 const WHY_MOBILE_MQ = '(max-width: 1023px)';
 
-function initWhyMobileTabs() {
+let teardown: (() => void) | null = null;
+
+function mountWhyMobileTabs() {
+  teardown?.();
+  teardown = null;
+
   const root = document.querySelector<HTMLElement>('[data-why-mobile]');
-  if (!root || !window.matchMedia(WHY_MOBILE_MQ).matches) return;
+  if (!root) return;
 
   const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-why-tab]'));
   const backgrounds = Array.from(root.querySelectorAll<HTMLElement>('[data-why-mobile-bg]'));
@@ -51,10 +56,10 @@ function initWhyMobileTabs() {
     });
   }
 
-  tabs.forEach((tab, index) => {
-    tab.addEventListener('click', () => activate(index));
+  const unsubs = tabs.map((tab, index) => {
+    const onClick = () => activate(index);
 
-    tab.addEventListener('keydown', (event) => {
+    const onKeydown = (event: KeyboardEvent) => {
       let next = index;
 
       if (event.key === 'ArrowRight') {
@@ -68,8 +73,34 @@ function initWhyMobileTabs() {
       event.preventDefault();
       activate(next);
       tabs[next]?.focus();
-    });
+    };
+
+    tab.addEventListener('click', onClick);
+    tab.addEventListener('keydown', onKeydown);
+
+    return () => {
+      tab.removeEventListener('click', onClick);
+      tab.removeEventListener('keydown', onKeydown);
+    };
   });
+
+  teardown = () => {
+    unsubs.forEach((unsub) => unsub());
+  };
+}
+
+function syncWhyMobileTabs() {
+  if (window.matchMedia(WHY_MOBILE_MQ).matches) {
+    mountWhyMobileTabs();
+  } else {
+    teardown?.();
+    teardown = null;
+  }
+}
+
+function initWhyMobileTabs() {
+  syncWhyMobileTabs();
+  window.matchMedia(WHY_MOBILE_MQ).addEventListener('change', syncWhyMobileTabs);
 }
 
 if (document.readyState === 'loading') {
