@@ -7,11 +7,13 @@ backend:
   repo: DesmondMails/veinte
   branch: main
   # Netlify site domain used by its OAuth authentication service.
-  site_domain: https://shiny-centaur-3f610d.netlify.app/
+  site_domain: shiny-centaur-3f610d.netlify.app
 
 # When `decap-server` runs locally, Decap edits the current checkout instead of
 # making GitHub commits. In production it falls back to the GitHub backend above.
-local_backend: true
+local_backend:
+  url: http://localhost:8081/api/v1
+  allowed_hosts: [localhost, 127.0.0.1]
 
 site_url: https://shiny-centaur-3f610d.netlify.app/
 display_url: https://shiny-centaur-3f610d.netlify.app/
