@@ -1,0 +1,163 @@
+# Decap CMS is a Git-based editor. Saving content here creates a commit in the
+# main branch, after which Netlify rebuilds and publishes the Astro site.
+#
+# Authentication needs one final deployment-time setup. See README: "Decap CMS".
+backend:
+  name: github
+  repo: DesmondMails/veinte
+  branch: main
+  # Netlify site domain used by its OAuth authentication service.
+  site_domain: https://shiny-centaur-3f610d.netlify.app/
+
+# When `decap-server` runs locally, Decap edits the current checkout instead of
+# making GitHub commits. In production it falls back to the GitHub backend above.
+local_backend: true
+
+site_url: https://shiny-centaur-3f610d.netlify.app/
+display_url: https://shiny-centaur-3f610d.netlify.app/
+locale: uk
+
+# Required by Decap's config schema. Collections with their own media settings
+# (currently reviews) override this destination.
+media_folder: public/uploads
+public_folder: /uploads
+
+collections:
+  - name: courses
+    label: Курси
+    label_singular: Курс
+    folder: src/content/courses
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: subtitle
+    summary: "{{title}} {{subtitle}}"
+    fields:
+      - { label: Назва, name: title, widget: string }
+      - { label: Рівень, name: subtitle, widget: string, hint: "Наприклад: від A1 до A2" }
+      - { label: Опис, name: description, widget: text }
+      - label: Іконка
+        name: icon
+        widget: select
+        options: [star, university, crown]
+        default: star
+      - label: Колір іконки
+        name: iconVariant
+        widget: select
+        options: [light, dark, accent]
+        default: light
+      - { label: Валюта, name: currency, widget: string, default: "$" }
+      - { label: Актуальна ціна, name: priceCurrent, widget: number, value_type: int, min: 0 }
+      - { label: Стара ціна, name: priceOld, widget: number, value_type: int, min: 0 }
+      - { label: Залишилося місць, name: seatsLeft, widget: number, value_type: int, min: 0 }
+      - { label: Посилання кнопки, name: ctaHref, widget: string, default: "#cta-form" }
+      - label: Програма курсу
+        name: program
+        widget: list
+        field: { label: Тема, name: topic, widget: string }
+      - { label: Порядок показу, name: order, widget: number, value_type: int, min: 0, default: 0 }
+      - { label: Чернетка, name: draft, widget: boolean, default: false, required: false }
+
+  - name: reviews
+    label: Відгуки студентів
+    label_singular: Відгук
+    folder: src/content/reviews
+    create: true
+    extension: md
+    format: frontmatter
+    identifier_field: name
+    summary: "{{name}}"
+    # Photos are saved beside their review Markdown file so Astro can optimize
+    # them through the existing image() content schema.
+    media_folder: ""
+    public_folder: ""
+    fields:
+      - { label: Ім'я студента, name: name, widget: string }
+      - { label: Фото, name: photo, widget: image }
+      - { label: Опис фото для доступності, name: photoAlt, widget: string, required: false }
+      - { label: Точка А, name: pointA, widget: text }
+      - { label: Точка B, name: pointB, widget: text }
+      - { label: Порядок показу, name: order, widget: number, value_type: int, min: 0, default: 0 }
+      - { label: Чернетка, name: draft, widget: boolean, default: false, required: false }
+
+  - name: faq
+    label: Поширені запитання
+    files:
+      - name: faq
+        label: FAQ
+        file: src/content/faq/faq.yaml
+        fields:
+          - label: Запитання
+            name: items
+            widget: list
+            summary: "{{fields.question}}"
+            fields:
+              - { label: Запитання, name: question, widget: string }
+              - { label: Відповідь, name: answer, widget: text }
+              - { label: Відкрите за замовчуванням, name: openByDefault, widget: boolean, default: false }
+
+  - name: site_settings
+    label: Налаштування сайту
+    files:
+      - name: site_settings
+        label: Основний контент
+        file: src/content/site-settings/site-settings.yaml
+        fields:
+          - { label: Назва школи, name: siteName, widget: string }
+          - { label: Короткий опис, name: siteTagline, widget: string }
+          - { label: Контактний email, name: contactEmail, widget: string }
+          - label: Соціальні мережі
+            name: socials
+            widget: object
+            fields:
+              - { label: Instagram, name: instagram, widget: string }
+              - { label: Telegram, name: telegram, widget: string }
+              - { label: TikTok, name: tiktok, widget: string }
+          - label: Hero-блок
+            name: hero
+            widget: object
+            fields:
+              - { label: Заголовок, name: titleLine1, widget: string }
+              - { label: Другий рядок заголовка, name: titleLine2, widget: string }
+              - { label: Акцентний заголовок, name: accentTitle, widget: text }
+              - { label: Опис, name: description, widget: text }
+              - { label: Другий заголовок, name: secondaryTitle, widget: string }
+              - { label: Другий акцентний заголовок, name: secondaryAccent, widget: text }
+              - { label: Другий опис, name: secondaryDescription, widget: text }
+          - label: Основна кнопка
+            name: ctaPrimary
+            widget: object
+            fields:
+              - { label: Текст кнопки, name: label, widget: string }
+              - { label: Посилання, name: href, widget: string }
+          - label: Форма заявки
+            name: ctaForm
+            widget: object
+            fields:
+              - { label: Заголовок, name: title, widget: string }
+              - { label: Акцентний заголовок, name: accentTitle, widget: string }
+              - { label: Опис, name: description, widget: text }
+              - { label: Текст кнопки, name: submitLabel, widget: string }
+          - label: Footer
+            name: footer
+            widget: object
+            fields:
+              - { label: Цитата, name: quote, widget: text }
+              - { label: Copyright, name: copyright, widget: string }
+              - { label: Текст CTA, name: ctaLabel, widget: string }
+              - { label: Посилання CTA, name: ctaHref, widget: string }
+
+  - name: legal
+    label: Юридичні сторінки
+    label_singular: Юридична сторінка
+    folder: src/content/legal
+    create: false
+    extension: md
+    format: frontmatter
+    identifier_field: title
+    summary: "{{title}}"
+    fields:
+      - { label: Заголовок, name: title, widget: string }
+      - { label: Дата оновлення, name: updatedDate, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, required: false }
+      - { label: Порядок показу, name: order, widget: number, value_type: int, min: 0, default: 0 }
+      - { label: Текст сторінки, name: body, widget: markdown }
