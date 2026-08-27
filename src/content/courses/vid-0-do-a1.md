@@ -1,15 +1,15 @@
 ---
 title: Іспанська
-subtitle: від 0 до A1
-description: Для тих, хто готовий швидко заговорити базовою іспанською та нарешті почати розуміти мову.
+subtitle: від 0 до A102
+description: Для тих, хто готовий швидко заговорити базовою іспанською та
+  нарешті почати розуміти мову.
 icon: star
 iconVariant: light
 currency: $
 priceCurrent: 99
 priceOld: 150
 seatsLeft: 60
-ctaHref: '#cta-form'
-order: 1
+ctaHref: "#cta-form"
 program:
   - Алфавіт та вимова
   - Привітання та базові фрази
@@ -35,4 +35,5 @@ program:
   - Ser, estar, haber
   - La apariencia física
   - Pretérito perfecto
+order: 1
 ---
