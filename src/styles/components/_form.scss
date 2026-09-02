@@ -64,7 +64,7 @@
 
 .form__status {
   position: fixed;
-  z-index: 100;
+  z-index: 9999;
   right: max(1rem, env(safe-area-inset-right));
   bottom: max(1rem, env(safe-area-inset-bottom));
   width: min(24rem, calc(100vw - 2rem));
@@ -83,15 +83,15 @@
     transform var(--duration-base) var(--ease-out);
 
   &[data-state='success'] {
-    background: rgba(62, 207, 110, 0.12);
-    color: var(--color-success);
-    border: 1px solid rgba(62, 207, 110, 0.35);
+    background: var(--color-surface-900);
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
   }
 
   &[data-state='error'] {
-    background: rgba(255, 92, 92, 0.12);
+    background: var(--color-surface-900);
     color: var(--color-error);
-    border: 1px solid rgba(255, 92, 92, 0.35);
+    border: 1px solid var(--color-error);
   }
 
   &[data-state] {

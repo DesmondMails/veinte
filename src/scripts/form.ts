@@ -17,23 +17,23 @@ function initCtaForm() {
   const endpoint = form.dataset.leadsEndpoint;
   const status = form.querySelector<HTMLElement>('[data-cta-status]');
   const submitButton = form.querySelector<HTMLButtonElement>('[data-cta-submit]');
-  let successToastTimeout: number | undefined;
+  let toastTimeout: number | undefined;
 
   if (!endpoint) return;
 
   const clearStatus = () => {
-    window.clearTimeout(successToastTimeout);
+    window.clearTimeout(toastTimeout);
     status?.removeAttribute('data-state');
     if (status) status.textContent = '';
   };
 
-  const showSuccessToast = () => {
+  const showToast = (state: 'success' | 'error', message: string) => {
     if (!status) return;
 
     clearStatus();
-    status.setAttribute('data-state', 'success');
-    status.textContent = 'Дякуємо! Ми зв\u2019яжемося з вами найближчим часом.';
-    successToastTimeout = window.setTimeout(clearStatus, 3_000);
+    status.setAttribute('data-state', state);
+    status.textContent = message;
+    toastTimeout = window.setTimeout(clearStatus, 3_000);
   };
 
   form.addEventListener('submit', (event) => {
@@ -61,13 +61,10 @@ function initCtaForm() {
       .then((response) => {
         if (!response.ok) throw new Error(`Request failed with ${response.status}`);
         form.reset();
-        showSuccessToast();
+        showToast('success', 'Дякуємо! Ми зв\u2019яжемося з вами найближчим часом.');
       })
       .catch(() => {
-        if (status) {
-          status.setAttribute('data-state', 'error');
-          status.textContent = 'Щось пішло не так. Спробуйте ще раз або напишіть нам напряму.';
-        }
+        showToast('error', 'Щось пішло не так. Спробуйте ще раз або напишіть нам напряму.');
       })
       .finally(() => {
         submitButton?.removeAttribute('data-loading');
