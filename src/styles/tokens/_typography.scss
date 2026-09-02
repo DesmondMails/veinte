@@ -11,10 +11,13 @@
 //                        google font with a similar arcade/pixel silhouette.
 // - `--font-mono`      : nav, buttons, small body copy — Roboto Mono
 //                        (self-hosted via @fontsource for performance).
+// - `--font-logo`      : PP Neue Bit Bold — header / mobile menu wordmark only
+//                        (Figma 2358:1143).
 
 :root {
   --font-display: 'Veinte Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --font-pixel: 'Pixel Font7', 'Press Start 2P', 'Veinte Display', sans-serif;
+  --font-logo: 'PP Neue Bit', 'Pixel Font7', 'Press Start 2P', sans-serif;
   --font-mono: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --fw-regular: 400;

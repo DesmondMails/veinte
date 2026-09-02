@@ -80,13 +80,12 @@ p {
 
 .container {
   width: 100%;
-  max-width: var(--container-max-width);
+  max-width: var(--content-max-width);
   margin-inline: auto;
   padding-inline: var(--page-gutter);
 
-  // Figma desktop canvas is 1440 wide. With border-box, padding inside
-  // max-width: 1440px collapses the content box to 1360 — remove it once
-  // the viewport can fit the full canvas. Mobile/tablet keep the gutter.
+  // Figma canvas is 1440px; content column is 1360px — the remaining 40px
+  // per side comes from centering (margin-inline: auto), not inner padding.
   @include from('xxl') {
     padding-inline: 0;
   }

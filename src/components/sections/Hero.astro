@@ -35,8 +35,9 @@ const secondaryAccentLines = hero.secondaryAccent.includes('\n')
       fetchpriority="high"
       data-hero-media
     />
+    <!-- Figma 4122:522 (mobile) / 2274:5540 (desktop) — 180px fade at GIF bottom -->
+    <div class="hero__fade" aria-hidden="true"></div>
   </div>
-  <div class="hero__floor" aria-hidden="true"></div>
 
   <div class="container hero__container">
     <!--
@@ -95,6 +96,10 @@ const secondaryAccentLines = hero.secondaryAccent.includes('\n')
     background: var(--color-bg);
     height: 100svh;
     min-height: 52.75rem; // 844px — Figma mobile floor
+
+    @include from('lg') {
+      min-height: 62rem; // 992px — Figma 2358:1060 desktop artboard
+    }
   }
 
   // Computer layer sits above "Hola…" (z-index 1) and below accent/meta (3).
@@ -124,32 +129,36 @@ const secondaryAccentLines = hero.secondaryAccent.includes('\n')
     }
 
     // Figma desktop (2358:1084): 1823×1026 at x=-202 y=-34 inside 1440×992.
-    // Bottom of GIF aligns with frame bottom; anchor to bottom on 100svh.
+    // Fixed top keeps the monitor under "вже" — bottom anchoring shifts the GIF
+    // up on short viewports and covers the headline.
     @include from('lg') {
       width: 113.9375rem; // 1823px
       height: 64.125rem; // 1026px
       left: calc(50% - 0.65625rem); // center offset −10.5px from 1440 canvas
-      bottom: 0;
-      top: auto;
+      top: -2.125rem; // -34px — Figma y
+      bottom: auto;
       transform: translateX(-50%);
     }
   }
 
-  .hero__floor {
+  .hero__fade {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 0;
-    z-index: 2;
-    height: 11.25rem;
-    background:
-      radial-gradient(60% 100% at 50% 100%, rgba(254, 83, 14, 0.45), transparent 70%),
-      linear-gradient(180deg, transparent 0%, rgba(1, 1, 1, 0.35) 100%);
+    z-index: 1;
+    height: 11.25rem; // 180px — Figma 4122:522 / 2274:5540
     pointer-events: none;
+    background: linear-gradient(180deg, rgba(1, 1, 1, 0) 0%, var(--color-bg) 100%);
 
+    // Mobile GIF is vertically centered — anchor fade to the GIF bottom edge.
     @include until('lg') {
-      height: 24rem;
-      background: linear-gradient(180deg, transparent 0%, rgba(1, 1, 1, 0.72) 42%, rgba(1, 1, 1, 0.92) 100%);
+      top: calc(50% + 2.0625rem); // 50% − 31.5px + 489px/2 − 180px
+    }
+
+    // Desktop GIF uses fixed Figma top — fade sits on the GIF bottom edge.
+    @include from('lg') {
+      top: calc(-2.125rem + 64.125rem - 11.25rem); // −34px + 1026px − 180px
+      bottom: auto;
     }
   }
 
@@ -199,6 +208,15 @@ const secondaryAccentLines = hero.secondaryAccent.includes('\n')
       margin-bottom: 0;
       font-size: clamp(2.5rem, 1.2rem + 5.5vw, 5rem);
       max-width: 36rem;
+    }
+  }
+
+  .hero__title-line {
+    @include from('lg') {
+      // Keep "Hola, ви вже" on one row so the monitor sits below "вже".
+      &:first-child {
+        white-space: nowrap;
+      }
     }
   }
 
@@ -331,12 +349,9 @@ const secondaryAccentLines = hero.secondaryAccent.includes('\n')
     right: 1.5rem;
     z-index: 3;
     width: auto;
-    max-width: 21.375rem; // 342px — Figma 2358:1136
     margin-inline: auto;
     transform: none;
 
-    // .btn--primary hover/active replaces transform and breaks translateX centering.
-    &:hover:not(:disabled),
     &:active:not(:disabled) {
       transform: none;
     }

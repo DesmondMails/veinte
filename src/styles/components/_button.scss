@@ -60,11 +60,6 @@
     z-index: -1;
   }
 
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    filter: drop-shadow(4px 4px 10px rgba(254, 83, 14, 0.6));
-  }
-
   &:active:not(:disabled) {
     transform: translateY(1px);
   }
@@ -121,11 +116,6 @@
   &::before {
     display: none;
   }
-
-  &:hover:not(:disabled) {
-    background: var(--color-surface-700);
-    border-color: var(--color-surface-300);
-  }
 }
 
 .btn--outline-light {
@@ -135,10 +125,6 @@
 
   &::before {
     display: none;
-  }
-
-  &:hover:not(:disabled) {
-    background: var(--color-surface-100);
   }
 }
 
@@ -223,19 +209,11 @@
     background-image: url('/images/ui/btn-carousel-prev-neutral.png');
   }
 
-  &.btn--carousel-prev:not([aria-disabled='true']):hover::before {
-    filter: drop-shadow(4px 4px 10px rgba(254, 83, 14, 0.6));
-  }
-
   &.btn--carousel-next:not([aria-disabled='true'])::before {
     background-image: url('/images/ui/btn-carousel-next-orange.png');
   }
 
   &.btn--carousel-next[aria-disabled='true']::before {
     background-image: url('/images/ui/btn-carousel-next-neutral.png');
-  }
-
-  &.btn--carousel-next:not([aria-disabled='true']):hover::before {
-    filter: drop-shadow(4px 4px 10px rgba(254, 83, 14, 0.6));
   }
 }

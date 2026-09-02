@@ -17,3 +17,13 @@
   font-style: normal;
   font-display: swap;
 }
+
+// PP Neue Bit Bold — header logo (Figma 2358:1143). OTF is valid for the web;
+// woff2 would be smaller but this file works in all modern browsers.
+@font-face {
+  font-family: 'PP Neue Bit';
+  src: url('/fonts/ppneuebit/ppneuebit-bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

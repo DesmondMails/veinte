@@ -17,7 +17,7 @@ const reviews = await getReviews();
       </p>
     </div>
 
-    <div class="results__carousel" data-carousel>
+    <div class="results__carousel" data-carousel data-carousel-visible="4">
       <div class="results__viewport">
         <div class="results__track" data-carousel-track role="region" aria-label="Відгуки студентів" tabindex="0">
         {
@@ -155,7 +155,22 @@ const reviews = await getReviews();
   }
 
   .results__carousel {
-    --carousel-card-width: 20.5rem; // 328px — Figma, updated by carousel.ts
+    --carousel-card-max: 20.5rem; // 328px — Figma
+    --carousel-gap: 1rem; // 16px desktop track gap
+    --carousel-visible: 4;
+    --carousel-card-width: 100%; // mobile — one full-width card
+
+    @include from('lg') {
+      // Below 1440: 4 cards share the track evenly and shrink together.
+      --carousel-card-width: calc(
+        (100% - (var(--carousel-visible) - 1) * var(--carousel-gap)) / var(--carousel-visible)
+      );
+
+      @include from('xxl') {
+        // At Figma desktop canvas — fixed card width, no further scaling.
+        --carousel-card-width: var(--carousel-card-max);
+      }
+    }
   }
 
   .results__viewport {
@@ -210,7 +225,8 @@ const reviews = await getReviews();
 
   .results__photo {
     width: 100%;
-    height: 19.625rem; // 314px — Figma
+    aspect-ratio: 328 / 314;
+    height: auto;
     object-fit: cover;
     border-radius: 2px;
   }
@@ -218,14 +234,12 @@ const reviews = await getReviews();
   .results__text {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     gap: var(--space-4);
-    text-align: center;
+    text-align: left;
 
     @include from('lg') {
-      align-items: flex-start;
       gap: var(--space-5);
-      text-align: left;
     }
   }
 

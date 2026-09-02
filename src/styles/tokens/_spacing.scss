@@ -15,12 +15,12 @@
   --space-11: 6rem; // 96px
   --space-12: 7.5rem; // 120px
 
-  // Outer page gutter: 16px on mobile → 40px below the Figma desktop canvas.
-  // At ≥1440px the container IS the 1440 canvas, so horizontal padding drops
-  // to 0 — otherwise border-box padding shrinks the usable width to 1360.
+  // Outer page gutter: 16px on mobile → 40px on tablet/desktop below xxl.
+  // At ≥1440px the container is capped at --content-max-width and centered,
+  // so the 40px Figma inset is margin, not padding.
   --page-gutter: clamp(1rem, 0.5rem + 2.2vw, 2.5rem);
   --content-max-width: 1360px;
-  --container-max-width: 1440px;
+  --container-max-width: 1440px; // Figma artboard — reference only
 
   // Vertical rhythm between major sections.
   --section-spacing-mobile: 4rem;

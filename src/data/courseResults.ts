@@ -8,10 +8,6 @@ export interface CourseResultCard {
   offsetX: number;
   /** Final vertical offset (rem, desktop-only). */
   offsetY: number;
-  /** Scroll-enter start X (CSS length, e.g. -90vw). */
-  enterX: string;
-  /** Scroll-enter start Y (CSS length). */
-  enterY: string;
 }
 
 /**
@@ -29,8 +25,6 @@ export const courseResults: CourseResultCard[] = [
     rotation: 0,
     offsetX: 0,
     offsetY: 0,
-    enterX: '0rem',
-    enterY: '-28rem',
   },
   {
     icon: '🤝',
@@ -39,8 +33,6 @@ export const courseResults: CourseResultCard[] = [
     rotation: 5,
     offsetX: 15,
     offsetY: 5.6875,
-    enterX: '90vw',
-    enterY: '5.6875rem',
   },
   {
     icon: '✈️',
@@ -49,8 +41,6 @@ export const courseResults: CourseResultCard[] = [
     rotation: -5,
     offsetX: -15,
     offsetY: 5.6875,
-    enterX: '-90vw',
-    enterY: '5.6875rem',
   },
   {
     icon: '💡',
@@ -59,8 +49,6 @@ export const courseResults: CourseResultCard[] = [
     rotation: 0,
     offsetX: 0,
     offsetY: 13.5,
-    enterX: '0rem',
-    enterY: 'calc(13.5rem + 28rem)',
   },
 ];
 

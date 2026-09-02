@@ -2,10 +2,33 @@
  * Scroll-snap carousel: in scroll mode card width expands to fill the
  * viewport so the next slide never peeks in partially. In fit mode all
  * cards sit at the Figma 328px width with space-between.
+ *
+ * Results carousel card width is driven by CSS (calc/min) — JS only
+ * measures it for scroll position math.
  */
 
 const MAX_CARD_WIDTH = 328;
 const MOBILE_MQ = '(max-width: 1023px)';
+
+function getDesktopVisibleCount(carousel: HTMLElement): number | null {
+  const visible = Number.parseInt(carousel.dataset.carouselVisible ?? '', 10);
+  return Number.isFinite(visible) && visible > 0 ? visible : null;
+}
+
+/** Split track width evenly across visible cards — shrinks below MAX when needed. */
+function distributedCardWidth(trackWidth: number, visibleCount: number, gap: number): number {
+  if (visibleCount <= 0) return MAX_CARD_WIDTH;
+  const totalGaps = gap * (visibleCount - 1);
+  const raw = Math.floor((trackWidth - totalGaps) / visibleCount);
+  const fitsAtMax = visibleCount * MAX_CARD_WIDTH + totalGaps <= trackWidth;
+  if (fitsAtMax) return Math.min(MAX_CARD_WIDTH, Math.max(1, raw));
+  return Math.max(1, raw);
+}
+
+function measureCardWidth(items: HTMLElement[], fallback: number): number {
+  const measured = items[0]?.getBoundingClientRect().width ?? 0;
+  return measured > 0 ? measured : fallback;
+}
 
 function getGap(track: HTMLElement): number {
   const gap = getComputedStyle(track).gap;
@@ -74,11 +97,26 @@ function initCarousels() {
       const trackWidth = track.clientWidth;
       const gap = getGap(track);
       const mobile = isMobileLayout();
+      const desktopVisible = getDesktopVisibleCount(carousel);
+      const cssDrivenWidth = desktopVisible !== null;
 
       if (mobile) {
         visibleCount = 1;
         cardWidth = trackWidth;
+        if (!cssDrivenWidth) {
+          carousel.style.setProperty('--carousel-card-width', `${cardWidth}px`);
+        }
         track.dataset.carouselMode = 'scroll';
+      } else if (cssDrivenWidth) {
+        // Width comes from stylesheet — drop any inline override left from mobile.
+        carousel.style.removeProperty('--carousel-card-width');
+        visibleCount = Math.min(desktopVisible!, items.length);
+        track.dataset.carouselMode = 'scroll';
+        void carousel.offsetWidth; // recalc after removing inline custom property
+        cardWidth = measureCardWidth(
+          items,
+          distributedCardWidth(trackWidth, visibleCount, gap),
+        );
       } else {
         const fitAtMax = maxCardsAtFixedWidth(trackWidth, gap);
         const allVisible =
@@ -90,14 +128,13 @@ function initCarousels() {
           cardWidth = MAX_CARD_WIDTH;
           track.dataset.carouselMode = 'fit';
         } else {
-          // Fill the viewport exactly — no partial card peeking at any snap.
           visibleCount = Math.min(fitAtMax, items.length);
-          cardWidth = Math.floor((trackWidth - gap * (visibleCount - 1)) / visibleCount);
+          cardWidth = distributedCardWidth(trackWidth, visibleCount, gap);
           track.dataset.carouselMode = 'scroll';
         }
-      }
 
-      carousel.style.setProperty('--carousel-card-width', `${cardWidth}px`);
+        carousel.style.setProperty('--carousel-card-width', `${cardWidth}px`);
+      }
 
       maxIndex = getMaxIndex(items.length, visibleCount);
       carousel.dataset.carouselVisible = String(visibleCount);
@@ -194,6 +231,7 @@ function initCarousels() {
     }
 
     window.addEventListener('resize', syncLayout, { passive: true });
+    window.matchMedia(MOBILE_MQ).addEventListener('change', syncLayout);
 
     syncLayout();
   });
