@@ -15,11 +15,14 @@ function initCtaForm() {
   if (!form) return;
 
   const endpoint = form.dataset.leadsEndpoint;
-  const status = form.querySelector<HTMLElement>('[data-cta-status]');
+  const status = document.querySelector<HTMLElement>('[data-cta-status]');
   const submitButton = form.querySelector<HTMLButtonElement>('[data-cta-submit]');
   let toastTimeout: number | undefined;
 
   if (!endpoint) return;
+
+  // Keep the fixed toast outside section-level stacking contexts and clipping.
+  if (status) document.body.append(status);
 
   const clearStatus = () => {
     window.clearTimeout(toastTimeout);

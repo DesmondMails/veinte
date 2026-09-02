@@ -64,7 +64,7 @@
 
 .form__status {
   position: fixed;
-  z-index: 9999;
+  z-index: var(--z-toast);
   right: max(1rem, env(safe-area-inset-right));
   bottom: max(1rem, env(safe-area-inset-bottom));
   width: min(24rem, calc(100vw - 2rem));
