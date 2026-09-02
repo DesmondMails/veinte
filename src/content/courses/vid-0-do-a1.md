@@ -5,7 +5,7 @@ description: Для тих, хто готовий швидко заговори�
   нарешті почати розуміти мову.
 icon: star
 iconVariant: light
-currency: $
+currency: test
 priceCurrent: 99
 priceOld: 150
 seatsLeft: 60
