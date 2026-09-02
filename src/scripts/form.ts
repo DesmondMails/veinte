@@ -17,8 +17,24 @@ function initCtaForm() {
   const endpoint = form.dataset.leadsEndpoint;
   const status = form.querySelector<HTMLElement>('[data-cta-status]');
   const submitButton = form.querySelector<HTMLButtonElement>('[data-cta-submit]');
+  let successToastTimeout: number | undefined;
 
   if (!endpoint) return;
+
+  const clearStatus = () => {
+    window.clearTimeout(successToastTimeout);
+    status?.removeAttribute('data-state');
+    if (status) status.textContent = '';
+  };
+
+  const showSuccessToast = () => {
+    if (!status) return;
+
+    clearStatus();
+    status.setAttribute('data-state', 'success');
+    status.textContent = 'Дякуємо! Ми зв\u2019яжемося з вами найближчим часом.';
+    successToastTimeout = window.setTimeout(clearStatus, 3_000);
+  };
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -35,10 +51,7 @@ function initCtaForm() {
 
     submitButton?.setAttribute('data-loading', 'true');
     if (submitButton) submitButton.disabled = true;
-    if (status) {
-      status.removeAttribute('data-state');
-      status.textContent = '';
-    }
+    clearStatus();
 
     fetch(endpoint, {
       method: 'POST',
@@ -48,10 +61,7 @@ function initCtaForm() {
       .then((response) => {
         if (!response.ok) throw new Error(`Request failed with ${response.status}`);
         form.reset();
-        if (status) {
-          status.setAttribute('data-state', 'success');
-          status.textContent = 'Дякуємо! Ми зв\u2019яжемося з вами найближчим часом.';
-        }
+        showSuccessToast();
       })
       .catch(() => {
         if (status) {
