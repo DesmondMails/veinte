@@ -3,6 +3,9 @@ import { getSiteSettings } from '@/lib/content';
 
 const settings = await getSiteSettings();
 const { ctaForm } = settings;
+const leadsEndpoint =
+  import.meta.env.PUBLIC_LEADS_ENDPOINT ??
+  'https://telegram-leads-test.mikitaxz66.workers.dev/api/lead';
 ---
 
 <section class="section cta-form" id="cta-form" aria-labelledby="cta-form-heading">
@@ -20,11 +23,11 @@ const { ctaForm } = settings;
         class="form cta-form__form"
         name="cta-request"
         method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
+        action={leadsEndpoint}
         data-reveal
         data-reveal-index="1"
         data-cta-form
+        data-leads-endpoint={leadsEndpoint}
       >
         <input type="hidden" name="form-name" value="cta-request" />
         <p class="form__honeypot">

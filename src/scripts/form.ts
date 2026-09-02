@@ -1,8 +1,7 @@
 /**
- * Progressive-enhancement handler for the Netlify Forms CTA. Without JS the
- * form still works via a normal POST + full page reload (Netlify's standard
- * static-form handling). With JS we intercept submit to show inline
- * submitting/success/error states instead of navigating away.
+ * Progressive-enhancement handler for the Cloudflare Worker CTA. Without JS
+ * the form makes a regular POST to the endpoint; with JS it shows inline
+ * submitting, success, and error states instead of navigating away.
  */
 
 function encode(data: Record<string, string>): string {
@@ -15,8 +14,11 @@ function initCtaForm() {
   const form = document.querySelector<HTMLFormElement>('[data-cta-form]');
   if (!form) return;
 
+  const endpoint = form.dataset.leadsEndpoint;
   const status = form.querySelector<HTMLElement>('[data-cta-status]');
   const submitButton = form.querySelector<HTMLButtonElement>('[data-cta-submit]');
+
+  if (!endpoint) return;
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
@@ -38,7 +40,7 @@ function initCtaForm() {
       status.textContent = '';
     }
 
-    fetch('/', {
+    fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: encode(payload),
