@@ -176,16 +176,13 @@ const navLinks = [
   }
 
   .header__logo {
-    // Figma logo uses PP NeueBit Bold; we don't ship that face. Pixel Font7
-    // is the licensed bit font in the repo (same as accent headlines).
-    font-family: var(--font-pixel);
-    font-weight: var(--fw-regular);
-    font-size: 2rem; // Figma mobile: 32px
+    // Figma 2358:1143 — PP Neue Bit Bold, 32px mobile / 40px desktop.
+    font-family: var(--font-logo);
+    font-weight: var(--fw-bold);
+    font-size: 2rem; // 32px mobile
     line-height: 0.9;
-    letter-spacing: -0.02em;
     text-transform: uppercase;
     color: var(--color-surface-50);
-    // Keep the bitmap look crisp instead of browser-smoothed "sans".
     -webkit-font-smoothing: none;
     font-smooth: never;
 
@@ -276,11 +273,10 @@ const navLinks = [
   }
 
   .mobile-menu__logo {
-    font-family: var(--font-pixel);
-    font-weight: var(--fw-regular);
-    font-size: 2rem; // 32px
+    font-family: var(--font-logo);
+    font-weight: var(--fw-bold);
+    font-size: 2rem; // 32px — Figma 2358:1143
     line-height: 0.9;
-    letter-spacing: -0.02em;
     text-transform: uppercase;
     color: var(--color-surface-50);
     text-decoration: none;
@@ -331,6 +327,7 @@ const navLinks = [
     color: var(--color-surface-200);
     text-decoration: none;
     white-space: nowrap;
+    transition: color var(--duration-base) var(--ease-out);
 
     &:hover {
       color: var(--color-surface-50);

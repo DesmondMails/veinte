@@ -165,21 +165,12 @@ const legalLinks = [
       width: 13.3125rem; // 213px
     }
 
-    &:hover {
-      transform: translateY(-1px);
-      filter: drop-shadow(4px 4px 10px rgba(1, 1, 1, 0.18));
-    }
-
     &:active {
       transform: translateY(1px);
     }
 
     &--accent {
       color: var(--color-surface-50);
-
-      &:hover {
-        filter: drop-shadow(4px 4px 10px rgba(254, 83, 14, 0.6));
-      }
     }
   }
 
@@ -330,6 +321,7 @@ const legalLinks = [
     text-decoration: underline;
     text-underline-offset: 3px;
     white-space: nowrap;
+    transition: color var(--duration-base) var(--ease-out);
 
     &:hover {
       color: var(--color-text-on-light);

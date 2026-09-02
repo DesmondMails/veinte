@@ -90,7 +90,7 @@ const { ctaForm } = settings;
     </div>
   </div>
 
-  <!-- Figma desktop (2274:6299): full-bleed bg · mobile (2314:2142): video below CTA -->
+  <!-- Figma desktop (2274:6299): full-bleed bg video — hidden on mobile (2274:4898) -->
   <div class="cta-form__visual" aria-hidden="true">
     <video
       class="cta-form__media"
@@ -111,10 +111,26 @@ const { ctaForm } = settings;
 
 <script>
   const media = document.querySelector<HTMLVideoElement>('[data-cta-media]');
-  if (media && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    media.pause();
-    media.removeAttribute('autoplay');
-  }
+  const DESKTOP_MQ = '(min-width: 1024px)';
+
+  const syncCtaMedia = () => {
+    if (!media) return;
+
+    const isDesktop = window.matchMedia(DESKTOP_MQ).matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!isDesktop || prefersReducedMotion) {
+      media.pause();
+      media.removeAttribute('autoplay');
+      return;
+    }
+
+    media.setAttribute('autoplay', '');
+    media.play().catch(() => {});
+  };
+
+  syncCtaMedia();
+  window.matchMedia(DESKTOP_MQ).addEventListener('change', syncCtaMedia);
 </script>
 
 <style lang="scss">
@@ -124,7 +140,16 @@ const { ctaForm } = settings;
     position: relative;
     overflow: hidden;
     background: var(--color-bg);
-    padding-block: var(--space-9) 0; // top only on mobile — video sits flush below
+
+    @include until('lg') {
+      // Figma 2274:4898 — full mobile viewport, form only (no video).
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100svh;
+      min-height: 100dvh;
+      padding-block: 0; // override .section rhythm
+    }
 
     @include from('lg') {
       min-height: 52.8125rem; // 849px — Figma 2274:6298
@@ -135,21 +160,17 @@ const { ctaForm } = settings;
   }
 
   .cta-form__visual {
-    position: relative;
-    z-index: 1;
-    width: 100vw;
-    margin-inline: calc(50% - 50vw);
-    margin-top: var(--space-7); // 40px below form — Figma mobile
-    overflow: hidden;
-    pointer-events: none;
-    aspect-ratio: 390 / 391; // Figma 2314:2142
+    display: none;
 
     @include from('lg') {
+      display: block;
       position: absolute;
       inset: 0;
       z-index: 0;
       width: auto;
       margin: 0;
+      overflow: hidden;
+      pointer-events: none;
       aspect-ratio: auto;
     }
   }
@@ -173,15 +194,23 @@ const { ctaForm } = settings;
     position: relative;
     z-index: 1;
     width: 100%;
+
+    @include until('lg') {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
   }
 
-  // Figma 2274:6300 — left column 544px; mobile 2314:2143 — centered copy + form
+  // Figma 2274:4898 (mobile) / 2274:6300 (desktop)
   .cta-form__content {
     display: flex;
     flex-direction: column;
-    gap: var(--space-7); // 40px — subtitle → form on mobile
+    gap: var(--space-7); // 40px — copy → form
     width: 100%;
-    max-width: 21.625rem; // 346px mobile content width
+    max-width: 21.375rem; // 342px — Figma mobile
     margin-inline: auto;
     align-items: stretch;
 

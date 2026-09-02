@@ -23,7 +23,7 @@ import { courseResults } from '@/data/courseResults';
               <div
                 class="floppy"
                 data-floppy-card
-                style={`--rotation:${card.rotation}deg; --i:${index}; --offset-x:${card.offsetX}rem; --offset-y:${card.offsetY}rem; --enter-x:${card.enterX}; --enter-y:${card.enterY}; --layer:${index + 1}`}
+                style={`--rotation:${card.rotation}deg; --i:${index}; --offset-x:${card.offsetX}rem; --offset-y:${card.offsetY}rem; --layer:${index + 1}`}
               >
             <div class="floppy__media" aria-hidden="true">
               <Image
@@ -150,11 +150,31 @@ import { courseResults } from '@/data/courseResults';
   $deck-overlap: 1.1875rem; // 19px — top disk tucks under line 2 of title
   $deck-scroll-steps: 25rem; // 400px — matches data-floppy-scroll-distance
 
+  // Figma 4122:503 (mobile) — same viewport shell as WhyUs 2274:4322.
+  .course-results {
+    @include until('lg') {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100svh;
+      min-height: 100dvh;
+      padding-block: 0; // override .section rhythm on mobile
+    }
+
+    // Desktop keeps default .section padding (120px top/bottom).
+  }
+
   .course-results__container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-7); // 40px mobile
+
+    @include until('lg') {
+      flex: 1;
+      justify-content: center;
+      gap: var(--space-7); // 40px — Figma 4122:503 / WhyUs 2274:4322
+      width: 100%;
+    }
 
     @include from('lg') {
       gap: 0;
@@ -210,6 +230,7 @@ import { courseResults } from '@/data/courseResults';
   // ── Desktop sticky scroll stage ───────────────────────────────────────
   .course-results__scroll-stage {
     width: 100%;
+    overflow: visible;
     overflow-anchor: none;
 
     @include until('lg') {
@@ -254,23 +275,20 @@ import { courseResults } from '@/data/courseResults';
       height: $deck-height;
       max-width: none;
       margin-top: -$deck-overlap;
-
-      &.is-interactive .floppy {
-        transform: translate(-50%, 0) rotate(var(--rotation, 0deg)) scale(1);
-        translate: var(--offset-x) var(--offset-y);
-        transition: transform 0.35s ease;
-
-        &:hover {
-          z-index: 10;
-          transform: translate(-50%, 0) rotate(var(--rotation, 0deg)) scale(1.1);
-        }
-      }
+      overflow: visible;
     }
   }
 
   // ── Mobile carousel (342×360 disks) ───────────────────────────────────
   .course-results__carousel {
     width: 100%;
+
+    @include until('lg') {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-7); // 40px — Figma 4122:503 disk → arrows
+    }
 
     @include from('lg') {
       display: none;
@@ -310,7 +328,10 @@ import { courseResults } from '@/data/courseResults';
   .course-results__controls {
     display: flex;
     justify-content: center;
-    margin-top: var(--space-7); // 40px — Figma 2274:4613 disk → arrows
+
+    @include until('lg') {
+      margin-top: 0;
+    }
 
     @include from('lg') {
       margin-top: var(--space-5);
@@ -332,6 +353,8 @@ import { courseResults } from '@/data/courseResults';
 
     @include from('lg') {
       --card-reveal: 0;
+      --enter-x: var(--offset-x);
+      --enter-y: calc(var(--offset-y) + 28rem);
 
       position: absolute;
       top: 0;
@@ -339,6 +362,8 @@ import { courseResults } from '@/data/courseResults';
       width: 24.25rem; // 388px
       height: 25.5625rem; // 409px
       opacity: 0;
+      visibility: hidden;
+      will-change: translate;
       transform: translate(-50%, 0) rotate(calc(var(--rotation, 0deg) * var(--card-reveal)));
       translate:
         calc((1 - var(--card-reveal)) * var(--enter-x) + var(--card-reveal) * var(--offset-x))

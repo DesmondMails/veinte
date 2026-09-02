@@ -193,8 +193,20 @@ const count = whyUsItems.length;
   $stack-scroll-room: 22rem; // magnetize + brief hold after pile forms
 
   .why {
-    padding-top: 1rem;
-    padding-bottom: 5rem;
+    @include until('lg') {
+      // Figma 2274:4322 — full mobile viewport, content vertically centered.
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100svh;
+      min-height: 100dvh;
+      padding-block: 0; // override .section rhythm on mobile
+    }
+
+    @include from('lg') {
+      padding-top: 1rem;
+      padding-bottom: 5rem;
+    }
   }
 
   .why__container {
@@ -202,7 +214,11 @@ const count = whyUsItems.length;
     flex-direction: column;
 
     @include until('lg') {
-      gap: 2.5rem; // 80px — Figma mobile spacing heading → folder
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-7); // 40px — Figma 2274:4322
+      width: 100%;
     }
 
     @include from('lg') {
