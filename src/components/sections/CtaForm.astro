@@ -4,8 +4,8 @@ import { getSiteSettings } from '@/lib/content';
 const settings = await getSiteSettings();
 const { ctaForm } = settings;
 const leadsEndpoint =
-  import.meta.env.PUBLIC_LEADS_ENDPOINT ??
-  'https://telegram-leads-test.mikitaxz66.workers.dev/api/lead';
+  import.meta.env.PUBLIC_LEADS_ENDPOINT ?? '';
+  // 'https://telegram-leads-test.mikitaxz66.workers.dev/api/lead';
 ---
 
 <section class="section cta-form" id="cta-form" aria-labelledby="cta-form-heading">
