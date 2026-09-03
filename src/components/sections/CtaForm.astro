@@ -4,7 +4,7 @@ import { getSiteSettings } from '@/lib/content';
 const settings = await getSiteSettings();
 const { ctaForm } = settings;
 const leadsEndpoint =
-  import.meta.env.PUBLIC_LEADS_ENDPOINT ?? '';
+  import.meta.env.PUBLIC_LEADS_ENDPOINT ??
   'https://veinte-leads.katyapaliichuk.workers.dev/api/lead';
 ---
 
