@@ -6,9 +6,9 @@ backend:
   name: github
   repo: DesmondMails/veinte
   branch: cloudflare-test
-  base_url: https://veinte-cms-auth-test.mikitaxz66.workers.dev
+  base_url: https://veinte-cms-auth.katyapaliichuk.workers.dev
   auth_endpoint: /auth
-  site_domain: veinte.mikitaxz66.workers.dev
+  site_domain: veinte.katyapaliichuk.workers.dev
 
 # When `decap-server` runs locally, Decap edits the current checkout instead of
 # making GitHub commits. In production it falls back to the GitHub backend above.
@@ -16,8 +16,8 @@ local_backend:
   url: http://localhost:8081/api/v1
   allowed_hosts: [localhost, 127.0.0.1]
 
-site_url: https://veinte.mikitaxz66.workers.dev/
-display_url: https://veinte.mikitaxz66.workers.dev/
+site_url: https://veinte.katyapaliichuk.workers.dev/
+display_url: https://veinte.katyapaliichuk.workers.dev/
 locale: uk
 
 # Required by Decap's config schema. Collections with their own media settings
