@@ -6,7 +6,7 @@ const items = await getFaqItems();
 
 <section class="section faq" aria-labelledby="faq-heading">
   <div class="container faq__container">
-    <h2 id="faq-heading" class="faq__title" data-reveal>
+    <h2 id="faq-heading" class="faq__title">
       <span class="faq__title-white">
         Маєте<span class="faq__title-space"> </span><br class="faq__title-br" aria-hidden="true" /><span
           class="faq__title-continued">запитання?</span
@@ -95,10 +95,8 @@ const items = await getFaqItems();
       width: 27.6875rem;
       max-width: none;
       align-items: flex-start;
-      text-align: left;
       align-self: flex-start;
-      position: sticky;
-      top: 8rem;
+      text-align: left;
     }
   }
 
@@ -148,6 +146,7 @@ const items = await getFaqItems();
     @include from('lg') {
       flex: 0 1 49.1875rem; // 787px
       max-width: 49.1875rem;
+      padding-bottom: var(--faq-title-block);
     }
   }
 </style>

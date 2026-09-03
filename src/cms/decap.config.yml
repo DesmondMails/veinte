@@ -1,13 +1,14 @@
 # Decap CMS is a Git-based editor. Saving content here creates a commit in the
-# main branch, after which Netlify rebuilds and publishes the Astro site.
+# cloudflare-test branch, after which Cloudflare rebuilds and publishes the Astro site.
 #
 # Authentication needs one final deployment-time setup. See README: "Decap CMS".
 backend:
   name: github
   repo: DesmondMails/veinte
-  branch: main
-  # Netlify site domain used by its OAuth authentication service.
-  site_domain: shiny-centaur-3f610d.netlify.app
+  branch: cloudflare-test
+  base_url: https://auth.veinte.com.ua
+  auth_endpoint: /auth
+  site_domain: veinte.com.ua
 
 # When `decap-server` runs locally, Decap edits the current checkout instead of
 # making GitHub commits. In production it falls back to the GitHub backend above.
@@ -15,8 +16,8 @@ local_backend:
   url: http://localhost:8081/api/v1
   allowed_hosts: [localhost, 127.0.0.1]
 
-site_url: https://shiny-centaur-3f610d.netlify.app/
-display_url: https://shiny-centaur-3f610d.netlify.app/
+site_url: https://veinte.com.ua/
+display_url: https://veinte.com.ua/
 locale: uk
 
 # Required by Decap's config schema. Collections with their own media settings

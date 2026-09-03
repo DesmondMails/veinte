@@ -3,6 +3,9 @@ import { getSiteSettings } from '@/lib/content';
 
 const settings = await getSiteSettings();
 const { ctaForm } = settings;
+const leadsEndpoint =
+  import.meta.env.PUBLIC_LEADS_ENDPOINT ??
+  'https://api.veinte.com.ua/api/lead';
 ---
 
 <section class="section cta-form" id="cta-form" aria-labelledby="cta-form-heading">
@@ -20,11 +23,11 @@ const { ctaForm } = settings;
         class="form cta-form__form"
         name="cta-request"
         method="POST"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
+        action={leadsEndpoint}
         data-reveal
         data-reveal-index="1"
         data-cta-form
+        data-leads-endpoint={leadsEndpoint}
       >
         <input type="hidden" name="form-name" value="cta-request" />
         <p class="form__honeypot">
@@ -85,10 +88,11 @@ const { ctaForm } = settings;
           {ctaForm.submitLabel}
         </button>
 
-        <p class="form__status" data-cta-status role="status" aria-live="polite"></p>
       </form>
     </div>
   </div>
+
+  <p class="form__status" data-cta-status role="status" aria-live="polite"></p>
 
   <!-- Figma desktop (2274:6299): full-bleed bg video — hidden on mobile (2274:4898) -->
   <div class="cta-form__visual" aria-hidden="true">
@@ -210,7 +214,6 @@ const { ctaForm } = settings;
     flex-direction: column;
     gap: var(--space-7); // 40px — copy → form
     width: 100%;
-    max-width: 21.375rem; // 342px — Figma mobile
     margin-inline: auto;
     align-items: stretch;
 

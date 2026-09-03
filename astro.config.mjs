@@ -8,7 +8,7 @@ const resolvePath = (path) => fileURLToPath(new URL(path, import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://veinte-espanol.netlify.app',
+  site: 'https://veinte.com.ua',
   output: 'static',
   trailingSlash: 'never',
   integrations: [sitemap()],
