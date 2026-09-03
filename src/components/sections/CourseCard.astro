@@ -47,12 +47,12 @@ const formatProgramNumber = (n: number) => String(n).padStart(2, '0');
       <div class="course-row__price-wrap">
         <div class="course-row__price">
           <span class="course-row__price-current">
-            {currency}
-            {priceCurrent}
+            <span class="course-row__price-amount">{priceCurrent}</span>
+            <span class="course-row__price-currency">{currency}</span>
           </span>
           <span class="course-row__price-old">
-            {currency}
-            {priceOld}
+            <span class="course-row__price-amount">{priceOld}</span>
+            <span class="course-row__price-currency">{currency}</span>
           </span>
         </div>
         <span class="course-row__seats">Залишилось {seatsLeft} місць</span>
