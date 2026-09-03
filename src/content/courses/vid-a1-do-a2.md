@@ -1,15 +1,15 @@
 ---
 title: Іспанська
 subtitle: від A1 до A2
-description: Для тих, хто хоче почати впевнено спілкуватися і значно розширити словниковий запас.
+description: Для тих, хто хоче почати впевнено спілкуватися і значно розширити
+  словниковий запас.
 icon: university
 iconVariant: dark
-currency: $
-priceCurrent: 99
-priceOld: 150
+currency: грн
+priceCurrent: 4500
+priceOld: 6000
 seatsLeft: 60
-ctaHref: '#cta-form'
-order: 2
+ctaHref: "#cta-form"
 program:
   - En el hospital
   - Estar + gerundio
@@ -31,4 +31,5 @@ program:
   - En la cocina
   - La naturaleza
   - Pretérito imperfecto
+order: 2
 ---
