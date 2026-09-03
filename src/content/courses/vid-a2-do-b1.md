@@ -1,15 +1,15 @@
 ---
 title: Іспанська
 subtitle: від A2 до B1
-description: Для тих, хто прагне говорити вільно, розуміти тексти та будувати складніші речення.
+description: Для тих, хто прагне говорити вільно, розуміти тексти та будувати
+  складніші речення.
 icon: crown
 iconVariant: accent
 currency: грн
-priceCurrent: 99
-priceOld: 150
-seatsLeft: 60
-ctaHref: '#cta-form'
-order: 3
+priceCurrent: 4500
+priceOld: 6000
+seatsLeft: 48
+ctaHref: "#cta-form"
 program:
   - Різниця між минулими часами в іспанській
   - Presente de Subjuntivo
@@ -31,4 +31,5 @@ program:
   - Зворотні та звичайні дієслова
   - Дієслівні перифрази
   - Tecnología y redes sociales
+order: 3
 ---

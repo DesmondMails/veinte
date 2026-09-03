@@ -6,9 +6,9 @@ description: Для тих, хто готовий швидко заговори�
 icon: star
 iconVariant: light
 currency: грн
-priceCurrent: 99
-priceOld: 150
-seatsLeft: 60
+priceCurrent: 4500
+priceOld: 6000
+seatsLeft: 55
 ctaHref: "#cta-form"
 program:
   - Алфавіт та вимова
