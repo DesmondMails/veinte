@@ -17,10 +17,18 @@ const tabEar = {
   rightCurveEnd: 62,
   topLeftStart: 8,
   bottom: 51,
+  /** Centers 1px stroke on the outer edge (matches body border-left at 0–1px). */
+  edge: 0.5,
+  /** Active tab: trim path start (bottom-left, shortens left vertical). */
+  strokeTrimStart: 2.55,
+  /** Active tab: trim path end (bottom-right, junction with card). */
+  strokeTrimEnd: 2.55,
 } as const;
 
-const tabEarFill = `M0 ${tabEar.bottom}H63V${tabEar.rightCurveEnd}Q62 0.5 ${tabEar.flatTopEnd} 0.5H${tabEar.topLeftStart}Q1 0.5 1 ${tabEar.topLeftStart}V${tabEar.bottom}Z`;
-const tabEarStrokeIdle = `M1 ${tabEar.bottom}V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftStart} 0.5H${tabEar.flatTopEnd}Q62 0.5 62 ${tabEar.rightCurveEnd}V${tabEar.bottom}`;
+const tabEarFill = `M0 ${tabEar.bottom}H62V${tabEar.rightCurveEnd}Q62 0.5 ${tabEar.flatTopEnd} 0.5H${tabEar.topLeftStart}Q0 0.5 0 ${tabEar.topLeftStart}V${tabEar.bottom}Z`;
+
+// Inactive: full outline except bottom (open into body).
+const tabEarStroke = `M${tabEar.edge} ${tabEar.bottom}V${tabEar.topLeftStart}Q${tabEar.edge} 0.5 ${tabEar.topLeftStart} 0.5H${tabEar.flatTopEnd}Q62 0.5 62 ${tabEar.rightCurveEnd}V${tabEar.bottom}`;
 ---
 
 <div class="why-folder" data-why-mobile data-active-index="0" data-reveal>
@@ -46,12 +54,18 @@ const tabEarStrokeIdle = `M1 ${tabEar.bottom}V${tabEar.topLeftStart}Q1 0.5 ${tab
               focusable="false"
             >
               <path class="why-folder__tab-fill" d={tabEarFill} />
-              <!-- Inactive tabs only — no bottom edge. Active tab has no stroke. -->
               <path
                 class="why-folder__tab-stroke"
                 fill="none"
                 vector-effect="non-scaling-stroke"
-                d={tabEarStrokeIdle}
+                d={tabEarStroke}
+              />
+              <path
+                class="why-folder__tab-stroke-active"
+                fill="none"
+                vector-effect="non-scaling-stroke"
+                pathLength="100"
+                d={tabEarStroke}
               />
             </svg>
             <span class="why-folder__tab-label">{index + 1}/</span>
@@ -87,7 +101,10 @@ const tabEarStrokeIdle = `M1 ${tabEar.bottom}V${tabEar.topLeftStart}Q1 0.5 ${tab
   </div>
 </div>
 
-<style lang="scss">
+<style lang="scss" define:vars={{
+  folderTabStrokeTrimStart: tabEar.strokeTrimStart,
+  folderTabStrokeTrimEnd: tabEar.strokeTrimEnd,
+}}>
   @use '../../styles/components/button' as btn;
 
   // Figma 342×372 — converted to fluid tokens (scale with container width).
@@ -105,6 +122,8 @@ const tabEarStrokeIdle = `M1 ${tabEar.bottom}V${tabEar.topLeftStart}Q1 0.5 ${tab
     --folder-icon-gap: clamp(1.5rem, 9.3vw, 2rem); // ~32px keycap → copy
 
     --folder-tab-overlap: 2px; // SVG flap into body — seamless active join
+    --folder-tab-stroke-trim-start: var(--folderTabStrokeTrimStart);
+    --folder-tab-stroke-trim-end: var(--folderTabStrokeTrimEnd);
 
     width: 100%;
   }
@@ -182,6 +201,24 @@ const tabEarStrokeIdle = `M1 ${tabEar.bottom}V${tabEar.topLeftStart}Q1 0.5 ${tab
     }
   }
 
+  .why-folder__tab-stroke-active {
+    display: none;
+    stroke: var(--folder-stroke);
+    stroke-width: 1;
+    stroke-linecap: butt;
+    stroke-linejoin: miter;
+    // Asymmetric trim — start (left vertical) vs end (card junction).
+    stroke-dasharray: calc(
+        100 - var(--folder-tab-stroke-trim-start) - var(--folder-tab-stroke-trim-end)
+      )
+      100;
+    stroke-dashoffset: var(--folder-tab-stroke-trim-start);
+
+    .why-folder__tab[aria-selected='true'] & {
+      display: block;
+    }
+  }
+
   .why-folder__tab-label {
     position: relative;
     z-index: 1;
@@ -205,7 +242,7 @@ const tabEarStrokeIdle = `M1 ${tabEar.bottom}V${tabEar.topLeftStart}Q1 0.5 ${tab
 
   .why-folder__body {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: 100%;
     min-height: 20rem;
     padding: var(--folder-body-padding);

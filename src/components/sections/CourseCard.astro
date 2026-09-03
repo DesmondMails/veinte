@@ -30,33 +30,31 @@ const formatProgramNumber = (n: number) => String(n).padStart(2, '0');
   {...(carousel ? { 'data-carousel-item': true } : {})}
 >
   <div class="course-row__main">
-    <div class="course-row__content">
-      <div class="course-row__lead">
-        <span class={`course-row__keycap course-row__keycap--${iconVariant}`} aria-hidden="true">
-          <Icon name={icon} class="course-row__keycap-icon" />
+    <div class="course-row__lead">
+      <span class={`course-row__keycap course-row__keycap--${iconVariant}`} aria-hidden="true">
+        <Icon name={icon} class="course-row__keycap-icon" />
+      </span>
+
+      <h3 class="course-row__title">
+        <span class="course-row__title-line">{title}</span>
+        <span class="course-row__title-line">{subtitle}</span>
+      </h3>
+    </div>
+
+    <p class="course-row__description">{description}</p>
+
+    <div class="course-row__price-wrap">
+      <div class="course-row__price">
+        <span class="course-row__price-current">
+          <span class="course-row__price-amount">{priceCurrent}</span>
+          <span class="course-row__price-currency">{currency}</span>
         </span>
-
-        <h3 class="course-row__title">
-          <span class="course-row__title-line">{title}</span>
-          <span class="course-row__title-line">{subtitle}</span>
-        </h3>
+        <span class="course-row__price-old">
+          <span class="course-row__price-amount">{priceOld}</span>
+          <span class="course-row__price-currency">{currency}</span>
+        </span>
       </div>
-
-      <p class="course-row__description">{description}</p>
-
-      <div class="course-row__price-wrap">
-        <div class="course-row__price">
-          <span class="course-row__price-current">
-            <span class="course-row__price-amount">{priceCurrent}</span>
-            <span class="course-row__price-currency">{currency}</span>
-          </span>
-          <span class="course-row__price-old">
-            <span class="course-row__price-amount">{priceOld}</span>
-            <span class="course-row__price-currency">{currency}</span>
-          </span>
-        </div>
-        <span class="course-row__seats">Залишилось {seatsLeft} місць</span>
-      </div>
+      <span class="course-row__seats">Залишилось {seatsLeft} місць</span>
     </div>
 
     <div class="course-row__actions">
