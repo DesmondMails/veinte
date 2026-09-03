@@ -9,20 +9,18 @@
 import { whyUsItems } from '@/data/whyUs';
 
 /**
- * Tab ear shape tuning (viewBox 0 0 63 50).
- * Edit these to adjust the folder tab silhouette:
- * - flatTopEnd: x where the flat top ends (↑ = longer flat top)
- * - rightCurveEnd: y where the right slope meets the base (↓ = steeper angle)
- * - topLeftRadius: x/y of the top-left corner round (Q control)
+ * Tab ear (viewBox 0 0 63 51). Units 0–50 = visible tab; y=51 = 1px overlap flap
+ * that continues into the body for a seamless active-tab join (Figma 2274:4067).
  */
 const tabEar = {
   flatTopEnd: 24,
   rightCurveEnd: 62,
   topLeftStart: 8,
+  bottom: 51,
 } as const;
 
-const tabEarFill = `M1 50H62V${tabEar.rightCurveEnd}Q62 0.5 ${tabEar.flatTopEnd} 0.5H${tabEar.topLeftStart}Q1 0.5 1 ${tabEar.topLeftStart}V50Z`;
-const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftStart} 0.5H${tabEar.flatTopEnd}Q62 0.5 62 ${tabEar.rightCurveEnd}V50`;
+const tabEarFill = `M0 ${tabEar.bottom}H63V${tabEar.rightCurveEnd}Q62 0.5 ${tabEar.flatTopEnd} 0.5H${tabEar.topLeftStart}Q1 0.5 1 ${tabEar.topLeftStart}V${tabEar.bottom}Z`;
+const tabEarStrokeIdle = `M1 ${tabEar.bottom}V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftStart} 0.5H${tabEar.flatTopEnd}Q62 0.5 62 ${tabEar.rightCurveEnd}V${tabEar.bottom}`;
 ---
 
 <div class="why-folder" data-why-mobile data-active-index="0" data-reveal>
@@ -42,7 +40,7 @@ const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftSta
           >
             <svg
               class="why-folder__tab-shape"
-              viewBox="0 0 63 50"
+              viewBox="0 0 63 51"
               preserveAspectRatio="none"
               aria-hidden="true"
               focusable="false"
@@ -106,6 +104,8 @@ const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftSta
     --folder-title-size: clamp(1.125rem, 5.8vw, 1.25rem); // 20px
     --folder-icon-gap: clamp(1.5rem, 9.3vw, 2rem); // ~32px keycap → copy
 
+    --folder-tab-overlap: 2px; // SVG flap into body — seamless active join
+
     width: 100%;
   }
 
@@ -122,6 +122,7 @@ const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftSta
     width: 100%;
     position: relative;
     z-index: 2;
+    flex-shrink: 0;
   }
 
   .why-folder__tab {
@@ -143,6 +144,7 @@ const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftSta
     }
 
     &[aria-selected='true'] {
+      overflow: visible;
       z-index: 3;
     }
   }
@@ -154,6 +156,11 @@ const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftSta
     width: 100%;
     height: 100%;
     pointer-events: none;
+    shape-rendering: geometricPrecision;
+
+    .why-folder__tab[aria-selected='true'] & {
+      height: calc(100% + var(--folder-tab-overlap));
+    }
   }
 
   .why-folder__tab-fill {
@@ -200,13 +207,11 @@ const tabEarStrokeIdle = `M1 50V${tabEar.topLeftStart}Q1 0.5 ${tabEar.topLeftSta
     position: relative;
     z-index: 1;
     width: 100%;
-    height: 20rem;
-
+    min-height: 20rem;
     padding: var(--folder-body-padding);
     border: 1px solid var(--folder-stroke);
     border-top: none;
-    border-radius: 0 0 var(--folder-body-radius)
-      var(--folder-body-radius);
+    border-radius: 0 0 var(--folder-body-radius) var(--folder-body-radius);
     background: var(--color-accent);
   }
 

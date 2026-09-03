@@ -4,7 +4,7 @@ subtitle: від A1 до A2
 description: Для тих, хто хоче почати впевнено спілкуватися і значно розширити словниковий запас.
 icon: university
 iconVariant: dark
-currency: $
+currency: грн
 priceCurrent: 99
 priceOld: 150
 seatsLeft: 60

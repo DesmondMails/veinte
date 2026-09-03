@@ -4,7 +4,7 @@ subtitle: від A2 до B1
 description: Для тих, хто прагне говорити вільно, розуміти тексти та будувати складніші речення.
 icon: crown
 iconVariant: accent
-currency: $
+currency: грн
 priceCurrent: 99
 priceOld: 150
 seatsLeft: 60

@@ -272,11 +272,16 @@ const courses = await getCourses();
 
     @include from('lg') {
       display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1.15fr) auto;
+      column-gap: var(--space-7); // 40px — lg/tablet; Figma 80px from xxl
+      align-items: center;
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    @include from('xxl') {
       grid-template-columns: 22.625rem 19.625rem 12.5625rem; // 362 | 314 | 201 px
       column-gap: var(--space-9); // 80px
-      align-items: center;
-      flex: 1 1 auto;
-      min-width: 0;
     }
   }
 
@@ -291,6 +296,11 @@ const courses = await getCourses();
       flex-direction: row;
       align-items: center;
       gap: var(--space-5); // 24px — Figma 4142:35 / 4143:616
+      width: auto;
+      min-width: 0;
+    }
+
+    @include from('xxl') {
       width: 22.625rem; // 74 + 24 + 256
     }
   }
@@ -348,20 +358,26 @@ const courses = await getCourses();
     letter-spacing: -0.01em;
     line-height: 0.9;
     color: var(--color-text-on-light);
-    width: 16rem; // 256px
+    width: 16rem; // 256px mobile / Figma xxl
+    min-width: 0;
+
+    @include from('lg') {
+      width: auto;
+    }
+
+    @include from('xxl') {
+      width: 16rem;
+    }
   }
 
   :global(.course-row__title-line) {
     font-size: 1.875rem; // 30px mobile
+    color: var(--color-text-on-light);
 
     @include from('lg') {
       font-size: 2.5rem; // 40px
       letter-spacing: -0.025em;
     }
-  }
-
-  :global(.course-row__title-line--accent) {
-    color: var(--color-accent);
   }
 
   :global(.course-row__description) {
@@ -371,6 +387,11 @@ const courses = await getCourses();
     color: $text-muted;
 
     @include from('lg') {
+      width: auto;
+      max-width: none;
+    }
+
+    @include from('xxl') {
       width: 19.625rem; // 314px
       max-width: 19.625rem;
     }
@@ -381,15 +402,23 @@ const courses = await getCourses();
     flex-direction: column;
     gap: var(--space-2);
     flex-shrink: 0;
+    min-width: 0;
 
     @include from('lg') {
-      width: 12.5625rem; // 201px
+      width: auto;
+      max-width: 12.5625rem; // 201px — не заїжджає під CTA
+    }
+
+    @include from('xxl') {
+      width: 12.5625rem;
+      max-width: 12.5625rem;
     }
   }
 
   :global(.course-row__price) {
     display: flex;
-    align-items: center;
+    flex-wrap: wrap;
+    align-items: baseline;
     gap: var(--space-5); // 24px — Figma 4142:35 / 4143:616
   }
 
