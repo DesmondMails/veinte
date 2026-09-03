@@ -5,10 +5,10 @@ description: Для тих, хто готовий швидко заговори�
   нарешті почати розуміти мову.
 icon: star
 iconVariant: light
-currency: $
-priceCurrent: 99
-priceOld: 150
-seatsLeft: 60
+currency: грн
+priceCurrent: 4500
+priceOld: 6000
+seatsLeft: 55
 ctaHref: "#cta-form"
 program:
   - Алфавіт та вимова
