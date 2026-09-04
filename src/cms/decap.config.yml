@@ -5,7 +5,7 @@
 backend:
   name: github
   repo: DesmondMails/veinte
-  branch: cloudflare-test
+  branch: main
   base_url: https://auth.veinte.com.ua
   auth_endpoint: /auth
   site_domain: veinte.com.ua
