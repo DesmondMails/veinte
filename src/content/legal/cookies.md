@@ -145,7 +145,7 @@ Veinte School
 
 Юридична адреса: Львівська область, Стрийський район, село Мазурівка, вул. Стрийська, буд. 32
 
-E-mail: veinte.school@gmail.com
+E-mail: veinteschool@gmail.com
 
 Telegram: @veinteschool
 
