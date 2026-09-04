@@ -10,6 +10,17 @@ function encode(data: Record<string, string>): string {
     .join('&');
 }
 
+function trackLead() {
+  const analytics = window as Window & {
+    gtag?: (...args: unknown[]) => void;
+  };
+
+  analytics.gtag?.('event', 'generate_lead', {
+    form_name: 'course_consultation',
+    form_location: 'cta_section',
+  });
+}
+
 function initCtaForm() {
   const form = document.querySelector<HTMLFormElement>('[data-cta-form]');
   if (!form) return;
@@ -63,6 +74,7 @@ function initCtaForm() {
     })
       .then((response) => {
         if (!response.ok) throw new Error(`Request failed with ${response.status}`);
+        trackLead();
         form.reset();
         showToast('success', 'Дякуємо! Ми зв\u2019яжемося з вами найближчим часом.');
       })

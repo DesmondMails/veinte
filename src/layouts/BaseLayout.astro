@@ -12,6 +12,7 @@ import '@/styles/main.scss';
 import SkipLink from '@components/layout/SkipLink.astro';
 import Header from '@components/layout/Header.astro';
 import Footer from '@components/layout/Footer.astro';
+import CookieConsent from '@components/layout/CookieConsent.astro';
 import { getSiteSettings } from '@/lib/content';
 
 interface Props {
@@ -27,6 +28,7 @@ interface Props {
 }
 
 const SITE_ICON = '/images/favicon.png';
+const GOOGLE_ANALYTICS_ID = 'G-RGKV2YG8RW';
 
 const {
   title,
@@ -44,7 +46,7 @@ const jsonLdList = structuredData ? (Array.isArray(structuredData) ? structuredD
 ---
 
 <!doctype html>
-<html lang="uk">
+<html lang="uk" data-google-analytics-id={GOOGLE_ANALYTICS_ID}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -87,7 +89,10 @@ const jsonLdList = structuredData ? (Array.isArray(structuredData) ? structuredD
       <slot />
     </main>
     <Footer />
+    <CookieConsent />
     <script>
+      import '@scripts/cookie-consent';
+      import '@scripts/google-analytics';
       import '@scripts/form';
       import '@scripts/reveal';
     </script>
