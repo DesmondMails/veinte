@@ -9,7 +9,7 @@ currency: грн
 priceCurrent: 4500
 priceOld: 6000
 seatsLeft: 55
-ctaHref: "#cta-form"
+ctaHref: https://veinte.kwiga.com/courses/ispanska-vid-0-do-a1
 program:
   - Алфавіт та вимова
   - Привітання та базові фрази
