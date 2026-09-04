@@ -9,7 +9,7 @@ currency: грн
 priceCurrent: 4500
 priceOld: 6000
 seatsLeft: 55
-ctaHref: "#cta-form"
+ctaHref: https://veinte.kwiga.com/ua/products/111711
 program:
   - Алфавіт та вимова
   - Привітання та базові фрази
