@@ -9,7 +9,7 @@ currency: грн
 priceCurrent: 4500
 priceOld: 6000
 seatsLeft: 60
-ctaHref: https://veinte.kwiga.com/courses/ispanska-vid-a1-do-a2
+ctaHref: https://veinte.kwiga.com/ua/products/111911
 program:
   - En el hospital
   - Estar + gerundio
