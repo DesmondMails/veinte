@@ -7,7 +7,8 @@
 // from `public/fonts/pixel/` (see the README there). woff2/woff are
 // generated from the supplied Pixel_Font-7.ttf so the browser downloads the
 // smallest possible file; the family name matches the one referenced by
-// `--font-pixel` in _typography.scss.
+// `--font-pixel` in _typography.scss. Keep display text hidden briefly rather
+// than rendering it in a much larger fallback face and reflowing the layout.
 @font-face {
   font-family: 'Pixel Font7';
   src:
@@ -15,15 +16,15 @@
     url('/fonts/pixel/pixel-font7-regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
-// PP Neue Bit Bold — header logo (Figma 2358:1143). OTF is valid for the web;
-// woff2 would be smaller but this file works in all modern browsers.
+// PP Neue Bit Bold — header logo (Figma 2358:1143). The same rule prevents
+// the wordmark from visibly changing width when navigating between pages.
 @font-face {
   font-family: 'PP Neue Bit';
   src: url('/fonts/ppneuebit/ppneuebit-bold.otf') format('opentype');
   font-weight: 700;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
