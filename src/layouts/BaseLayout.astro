@@ -17,7 +17,7 @@ import { getSiteSettings } from '@/lib/content';
 interface Props {
   title: string;
   description: string;
-  /** Absolute or site-relative path to the OG image. Defaults to the shared og-image. */
+  /** Absolute or site-relative path to the OG / social preview image. Defaults to the site icon. */
   ogImage?: string;
   noindex?: boolean;
   /** One or more JSON-LD objects to embed in <head>. */
@@ -26,10 +26,12 @@ interface Props {
   variant?: 'default' | 'legal';
 }
 
+const SITE_ICON = '/images/favicon.png';
+
 const {
   title,
   description,
-  ogImage = '/og-image.jpg',
+  ogImage = SITE_ICON,
   noindex = false,
   structuredData,
   variant = 'default',
@@ -53,9 +55,8 @@ const jsonLdList = structuredData ? (Array.isArray(structuredData) ? structuredD
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <meta name="theme-color" content="#010101" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href={SITE_ICON} sizes="1600x1600" />
+    <link rel="apple-touch-icon" href={SITE_ICON} />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={settings.siteName} />
@@ -63,6 +64,9 @@ const jsonLdList = structuredData ? (Array.isArray(structuredData) ? structuredD
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1600" />
+    <meta property="og:image:height" content="1600" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:locale" content="uk_UA" />
 
     <meta name="twitter:card" content="summary_large_image" />
