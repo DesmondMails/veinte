@@ -27,6 +27,7 @@ function initCtaForm() {
 
   const endpoint = form.dataset.leadsEndpoint;
   const status = document.querySelector<HTMLElement>('[data-cta-status]');
+  const statusMessage = status?.querySelector<HTMLElement>('[data-cta-status-message]');
   const submitButton = form.querySelector<HTMLButtonElement>('[data-cta-submit]');
   let toastTimeout: number | undefined;
 
@@ -35,18 +36,47 @@ function initCtaForm() {
   // Keep the fixed toast outside section-level stacking contexts and clipping.
   if (status) document.body.append(status);
 
+  const toasts: Record<'success' | 'error', { emoji: string; lines: string[] }> = {
+    success: {
+      emoji: '🧡',
+      lines: ['Дякуємо! Ми зв\u2019яжемося з вами найближчим часом.'],
+    },
+    error: {
+      emoji: '😥',
+      lines: ['Упс, щось пішло не так!', 'Спробуйте ще раз або зв\u2019яжіться з нами'],
+    },
+  };
+
   const clearStatus = () => {
     window.clearTimeout(toastTimeout);
     status?.removeAttribute('data-state');
-    if (status) status.textContent = '';
+    if (statusMessage) statusMessage.replaceChildren();
   };
 
-  const showToast = (state: 'success' | 'error', message: string) => {
-    if (!status) return;
+  const showToast = (state: 'success' | 'error') => {
+    if (!status || !statusMessage) return;
 
+    const { emoji, lines } = toasts[state];
     clearStatus();
     status.setAttribute('data-state', state);
-    status.textContent = message;
+
+    const firstLine = document.createElement('span');
+    firstLine.className = 'form-toast__line';
+
+    const emojiEl = document.createElement('span');
+    emojiEl.className = 'form-toast__emoji';
+    emojiEl.setAttribute('aria-hidden', 'true');
+    emojiEl.textContent = `${emoji} `;
+    firstLine.append(emojiEl, document.createTextNode(lines[0]));
+    statusMessage.append(firstLine);
+
+    lines.slice(1).forEach((line) => {
+      const nextLine = document.createElement('span');
+      nextLine.className = 'form-toast__line';
+      nextLine.textContent = line;
+      statusMessage.append(nextLine);
+    });
+
     toastTimeout = window.setTimeout(clearStatus, 3_000);
   };
 
@@ -76,10 +106,10 @@ function initCtaForm() {
         if (!response.ok) throw new Error(`Request failed with ${response.status}`);
         trackLead();
         form.reset();
-        showToast('success', 'Дякуємо! Ми зв\u2019яжемося з вами найближчим часом.');
+        showToast('success');
       })
       .catch(() => {
-        showToast('error', 'Щось пішло не так. Спробуйте ще раз або напишіть нам напряму.');
+        showToast('error');
       })
       .finally(() => {
         submitButton?.removeAttribute('data-loading');

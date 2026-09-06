@@ -61,19 +61,23 @@
   overflow: hidden;
 }
 
-.form__status {
+// Figma 4225:1697 (success) / 4225:1710 (error) — form result toast.
+.form-toast {
   position: fixed;
   z-index: var(--z-toast);
   right: max(1rem, env(safe-area-inset-right));
   bottom: max(1rem, env(safe-area-inset-bottom));
-  width: min(24rem, calc(100vw - 2rem));
+  display: flex;
+  align-items: center;
+  width: min(36.25rem, calc(100vw - 2rem)); // 580px desktop
+  min-height: 6.875rem; // 110px
   margin: 0;
-  padding: var(--space-4) var(--space-5);
+  padding: var(--space-5); // 24px
+  background: var(--color-black);
+  border: 1px solid var(--color-surface-300);
   border-radius: var(--radius-md);
-  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.35);
-  font-family: var(--font-mono);
-  font-size: var(--fs-body-sm);
-  line-height: var(--lh-body);
+  box-shadow: var(--shadow-card);
+  color: var(--color-surface-50);
   opacity: 0;
   pointer-events: none;
   transform: translateY(1rem);
@@ -81,19 +85,12 @@
     opacity var(--duration-base) var(--ease-out),
     transform var(--duration-base) var(--ease-out);
 
-  &[data-state='success'] {
-    background: var(--color-surface-900);
-    color: var(--color-accent);
-    border: 1px solid var(--color-accent);
-  }
-
-  &[data-state='error'] {
-    background: var(--color-surface-900);
-    color: var(--color-error);
-    border: 1px solid var(--color-error);
+  &:not([data-state]) {
+    display: none;
   }
 
   &[data-state] {
+    display: flex;
     opacity: 1;
     pointer-events: auto;
     transform: translateY(0);
@@ -102,11 +99,48 @@
   @media (min-width: 64rem) {
     right: 2rem;
     bottom: 2rem;
+    width: 36.25rem; // 580px
+    padding: var(--space-6); // 32px
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
+}
+
+.form-toast__message {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: 1.25rem; // 20px mobile
+  font-weight: var(--fw-regular);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--color-surface-50);
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+
+  @media (min-width: 64rem) {
+    font-size: 1.5rem; // 24px
+    letter-spacing: -0.03em;
+  }
+}
+
+.form-toast__line {
+  display: block;
+}
+
+.form-toast__emoji {
+  font-family: initial;
+  font-style: normal;
+  font-weight: var(--fw-regular);
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: none;
+  -webkit-font-smoothing: auto;
+  font-smooth: auto;
 }
 
 .form__submit[data-loading='true'] {

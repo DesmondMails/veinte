@@ -15,7 +15,7 @@
   padding: var(--space-5); // 24px
   background: var(--color-black);
   border: 0;
-  border-radius: var(--radius-lg); // 16px
+  border-radius: var(--radius-md); // 16px
   box-shadow: var(--shadow-card);
   color: var(--color-surface-50);
   font-family: var(--font-mono);
@@ -136,6 +136,16 @@
     flex: 0 0 auto;
     gap: var(--space-4); // 16px desktop
     width: auto;
+  }
+
+  @include until('md') {
+    .cookie-consent__button--accept {
+      order: 1;
+    }
+
+    .cookie-consent__button--reject {
+      order: 2;
+    }
   }
 }
 
