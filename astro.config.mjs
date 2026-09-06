@@ -16,6 +16,9 @@ export default defineConfig({
     remotePatterns: [{ protocol: 'https' }],
   },
   vite: {
+    server: {
+      allowedHosts: ['.trycloudflare.com'],
+    },
     resolve: {
       alias: {
         '@': resolvePath('./src'),

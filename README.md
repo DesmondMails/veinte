@@ -13,6 +13,21 @@ npm run build
 
 Manage the local server with `astro dev status`, `astro dev logs`, and `astro dev stop`.
 
+### Cloudflare tunnel
+
+To share the local site over HTTPS (phone, another network, webhooks):
+
+```sh
+brew install cloudflared   # once
+npm run dev:tunnel
+```
+
+The script starts Astro on `http://127.0.0.1:4321` and prints a `https://*.trycloudflare.com` URL. Stop with `Ctrl+C`. If the dev server is already running, you can tunnel it alone with:
+
+```sh
+cloudflared tunnel --url http://127.0.0.1:4321
+```
+
 ## Content ownership
 
 The owner can edit these sections in Decap CMS without touching code:
