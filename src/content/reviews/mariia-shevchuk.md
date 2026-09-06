@@ -1,6 +1,6 @@
 ---
 name: Марія Шевчук
-photo: young-beautiful-woman-walking-park.jpg
+photo: hutton-butler.jpg
 photoAlt: Марія Шевчук
 pointA: "Точка А: Рівень A2, боялася говорити іспанською"
 pointB: "Точка B: Рівень B2 за 5 місяців — пройшла співбесіду та отримала роботу
