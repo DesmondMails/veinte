@@ -21,7 +21,7 @@ const reviews = await getReviews();
       <div class="results__viewport">
         <div class="results__track" data-carousel-track role="region" aria-label="Відгуки студентів" tabindex="0">
         {
-          [...reviews, ...reviews].map((review) => (
+          [...reviews].map((review) => (
             <article class="results__card" data-carousel-item>
               <Image
                 src={review.data.photo}

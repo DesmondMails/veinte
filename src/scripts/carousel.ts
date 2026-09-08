@@ -145,6 +145,13 @@ function initCarousels() {
         activeIndex = Math.min(activeIndex, maxIndex);
       }
 
+      // One tick per scroll position, not per card — extra ticks implied
+      // more pages after the last reachable slide.
+      const pageCount = track.dataset.carouselMode === 'fit' ? 1 : maxIndex + 1;
+      dots.forEach((dot, i) => {
+        dot.hidden = i >= pageCount;
+      });
+
       setActive(activeIndex);
     };
 
