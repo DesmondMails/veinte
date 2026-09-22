@@ -9,7 +9,7 @@ currency: грн
 priceCurrent: 4500
 priceOld: 6000
 seatsLeft: 48
-ctaHref: https://veinte.kwiga.com/ua/products/111966
+ctaHref: https://www.instagram.com/veinteschool/
 program:
   - Різниця між минулими часами в іспанській
   - Presente de Subjuntivo
