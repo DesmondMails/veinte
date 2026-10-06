@@ -76,7 +76,10 @@ collections:
     public_folder: ""
     fields:
       - { label: Ім'я студента, name: name, widget: string }
-      - { label: Фото, name: photo, widget: image }
+      - label: Фото
+        name: photo
+        widget: image
+        pattern: ['.*\.(jpe?g|png|webp|gif)$', "Дозволені формати: JPG, PNG, WEBP, GIF. HEIC/HEIF не підтримується — сконвертуйте фото перед завантаженням (на iPhone: Налаштування → Камера → Формати → Сумісність)."]
       - { label: Опис фото для доступності, name: photoAlt, widget: string, required: false }
       - { label: Точка А, name: pointA, widget: text }
       - { label: Точка B, name: pointB, widget: text }
