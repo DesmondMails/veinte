@@ -6,9 +6,9 @@ description: Для тих, хто прагне говорити вільно, �
 icon: crown
 iconVariant: accent
 currency: грн
-priceCurrent: 4500
-priceOld: 6000
-seatsLeft: 48
+priceCurrent: 2999
+priceOld: 4500
+seatsLeft: 5
 ctaHref: https://www.instagram.com/veinteschool/
 program:
   - Різниця між минулими часами в іспанській
