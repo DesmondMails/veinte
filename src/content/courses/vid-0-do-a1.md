@@ -8,7 +8,7 @@ iconVariant: light
 currency: грн
 priceCurrent: 2999
 priceOld: 4500
-seatsLeft: 55
+seatsLeft: 4
 ctaHref: https://www.instagram.com/veinteschool/
 program:
   - Алфавіт та вимова
