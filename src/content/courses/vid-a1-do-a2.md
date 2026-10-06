@@ -6,9 +6,9 @@ description: Для тих, хто хоче почати впевнено спі
 icon: university
 iconVariant: dark
 currency: грн
-priceCurrent: 4500
-priceOld: 6000
-seatsLeft: 60
+priceCurrent: 2999
+priceOld: 4500
+seatsLeft: 2
 ctaHref: https://www.instagram.com/veinteschool/
 program:
   - En el hospital
