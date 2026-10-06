@@ -6,8 +6,8 @@ description: Для тих, хто готовий швидко заговори�
 icon: star
 iconVariant: light
 currency: грн
-priceCurrent: 4500
-priceOld: 6000
+priceCurrent: 2999
+priceOld: 4500
 seatsLeft: 55
 ctaHref: https://www.instagram.com/veinteschool/
 program:
