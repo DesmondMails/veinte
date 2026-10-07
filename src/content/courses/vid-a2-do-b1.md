@@ -6,8 +6,8 @@ description: Для тих, хто прагне говорити вільно, �
 icon: crown
 iconVariant: accent
 currency: грн
-priceCurrent: 2999
-priceOld: 4500
+priceCurrent: 4499
+priceOld: 6000
 seatsLeft: 5
 ctaHref: https://www.instagram.com/veinteschool/
 program:
