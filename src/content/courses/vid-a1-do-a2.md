@@ -6,8 +6,8 @@ description: Для тих, хто хоче почати впевнено спі
 icon: university
 iconVariant: dark
 currency: грн
-priceCurrent: 2999
-priceOld: 4500
+priceCurrent: 4499
+priceOld: 6000
 seatsLeft: 2
 ctaHref: https://www.instagram.com/veinteschool/
 program:
